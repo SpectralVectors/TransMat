@@ -24,23 +24,43 @@ class TransMatOperator(bpy.types.Operator):
         print("")
         print("!!!_MATERIAL START_!!!")
         
-        for n in nodes:
+        for node in nodes:
 
             print("")
-            print("[Node] " + n.name + " is a " + n.bl_idname)
             # print the unique identifier first, it helps differentiate between
             # mutiple instances of the same node type, the print the bl_idname,
             # which is what we would use if we wanted to add a node of that type
+            print("[Node]") 
+            print(node.name + " is a " + node.bl_idname)
             
+            # Determine the type of node, and what values we need to extract to
+            # preserve the user's settings
+            if node.bl_idname == 'ShaderNodeValue':
+                print("Settings: ")
+                print("Value: " + str(material.node_tree.nodes["Value"].outputs[0].default_value))
+            if node.bl_idname == "ShaderNodeRGB":
+                print("Settings: ")
+                print("RGBA: (" + 
+                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[0], 3)) + ",",
+                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[1], 3)) + ",",
+                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[2], 3)) + ",",
+                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[3], 3)) + ")")                   
+            if node.bl_idname == "ShaderNodeMath":
+                print("Settings: ")
+                print(node.operation)
+            if node.bl_idname == "ShaderNodeBsdfPrincipled":
+                print("Settings: ")
+                print("Base Color: (" + 
+                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[0], 3)) + ",",
+                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[1], 3)) + ",",
+                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[2], 3)) + ",",
+                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[3], 3)) + ")")
+                print("Subsurface: " + 
+                str(material.node_tree.nodes["Principled BSDF"].inputs[1].default_value))
             
-            print(material.node_tree.nodes["Value"].outputs[0].default_value)#[0])
-            print(material.node_tree.nodes["RGB"].outputs[0].default_value[1])
-            print(material.node_tree.nodes["RGB"].outputs[0].default_value[2])
-            print(material.node_tree.nodes["RGB"].outputs[0].default_value[3])
-            #print(bpy.data.materials['Material'].node_tree.nodes["RGB"].outputs[0].default_value)
             
             #looping through the outputs
-            for no in n.outputs:
+            for no in node.outputs:
                 # only checking those that are connected
                 if no.is_linked:
                     # printing a nice, readable list of where the links start
