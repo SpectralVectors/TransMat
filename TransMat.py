@@ -18,6 +18,11 @@ class TransMatOperator(bpy.types.Operator):
         nodes = material.node_tree.nodes
         
         node_translate = {
+        "ShaderNodeBsdfPrincipled":"MaterialExpressionSetMaterialAttributes",
+        "ShaderNodeMixShader":"MaterialExpressionBlendMaterialAttributes",
+        "ShaderNodeAddShader":"MaterialExpressionAdd",
+        "ShaderNodeInvert":"MaterialExpressionOneMinus",
+        "ShaderNodeTexImage":"MaterialExpressionTextureSampleParameter2D",
         "ShaderNodeTexCoord":"MaterialExpressionTextureCoordinate",
         "ShaderNodeValue":"MaterialExpressionConstant",
         "ShaderNodeRGB":"MaterialExpressionConstant3Vector",
@@ -105,6 +110,11 @@ class TransMatOperator(bpy.types.Operator):
                 str(round(node.inputs[0].default_value[1], 3)) + ",",
                 str(round(node.inputs[0].default_value[2], 3)) + ",",
                 str(round(node.inputs[0].default_value[3], 3)) + ")")
+                print("Subsurface Color: (" + 
+                str(round(node.inputs[3].default_value[0], 3)) + ",",
+                str(round(node.inputs[3].default_value[1], 3)) + ",",
+                str(round(node.inputs[3].default_value[2], 3)) + ",",
+                str(round(node.inputs[3].default_value[3], 3)) + ")")
                 print("Metallic: " + 
                 str(node.inputs[4].default_value))
                 print("Specular: " + 
@@ -135,7 +145,18 @@ class TransMatOperator(bpy.types.Operator):
             if node.bl_idname =="ShaderNodeTexCoord":
                 
                 nodeinfo["Unreal Node"] = node_translate[node.bl_idname]
-
+                
+            if node.bl_idname == "ShaderNodeTexImage":
+                nodeinfo["Unreal Node"] = node_translate[node.bl_idname]
+                
+            if node.bl_idname == "ShaderNodeInvert":
+                nodeinfo["Unreal Node"] = node_translate[node.bl_idname]
+                
+            if node.bl_idname == "ShaderNodeAddShader":
+                nodeinfo["Unreal Node"] = node_translate[node.bl_idname]
+            
+            if node.bl_idname == "ShaderNodeMixShader":
+                nodeinfo["Unreal Node"] = node_translate[node.bl_idname]
             
             #looping through the outputs
             for output in node.outputs:
