@@ -37,26 +37,26 @@ class TransMatOperator(bpy.types.Operator):
             # preserve the user's settings
             if node.bl_idname == 'ShaderNodeValue':
                 print("Settings: ")
-                print("Value: " + str(material.node_tree.nodes["Value"].outputs[0].default_value))
+                print("Value: " + str(node.outputs[0].default_value))
             if node.bl_idname == "ShaderNodeRGB":
                 print("Settings: ")
                 print("RGBA: (" + 
-                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[0], 3)) + ",",
-                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[1], 3)) + ",",
-                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[2], 3)) + ",",
-                str(round(material.node_tree.nodes["RGB"].outputs[0].default_value[3], 3)) + ")")                   
+                str(round(node.outputs[0].default_value[0], 3)) + ",",
+                str(round(node.outputs[0].default_value[1], 3)) + ",",
+                str(round(node.outputs[0].default_value[2], 3)) + ",",
+                str(round(node.outputs[0].default_value[3], 3)) + ")")                   
             if node.bl_idname == "ShaderNodeMath":
                 print("Settings: ")
                 print(node.operation)
             if node.bl_idname == "ShaderNodeBsdfPrincipled":
                 print("Settings: ")
                 print("Base Color: (" + 
-                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[0], 3)) + ",",
-                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[1], 3)) + ",",
-                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[2], 3)) + ",",
-                str(round(material.node_tree.nodes["Principled BSDF"].inputs[0].default_value[3], 3)) + ")")
+                str(round(node.inputs[0].default_value[0], 3)) + ",",
+                str(round(node.inputs[0].default_value[1], 3)) + ",",
+                str(round(node.inputs[0].default_value[2], 3)) + ",",
+                str(round(node.inputs[0].default_value[3], 3)) + ")")
                 print("Subsurface: " + 
-                str(material.node_tree.nodes["Principled BSDF"].inputs[1].default_value))
+                str(node.inputs[1].default_value))
             
             
             #looping through the outputs
