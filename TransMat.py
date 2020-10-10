@@ -21,30 +21,30 @@ class TransMatOperator(bpy.types.Operator):
         exportdirectory = "D:\Blender\Scripts\TransmatOutputs\_"
         
         node_translate = {
-        "ShaderNodeBsdfPrincipled":"MaterialExpressionSetMaterialAttributes",
-        "ShaderNodeMixShader":"MaterialExpressionBlendMaterialAttributes",
-        "ShaderNodeAddShader":"MaterialExpressionAdd",
-        "ShaderNodeInvert":"MaterialExpressionOneMinus",
-        "ShaderNodeTexImage":"MaterialExpressionTextureSampleParameter2D",
-        "ShaderNodeTexCoord":"MaterialExpressionTextureCoordinate",
-        "ShaderNodeValue":"MaterialExpressionConstant",
-        "ShaderNodeRGB":"MaterialExpressionConstant3Vector",
+        "ShaderNodeBsdfPrincipled":"unreal.MaterialExpressionMakeMaterialAttributes",
+        "ShaderNodeMixShader":"unreal.MaterialExpressionBlendMaterialAttributes",
+        "ShaderNodeAddShader":"unreal.MaterialExpressionAdd",
+        "ShaderNodeInvert":"unreal.MaterialExpressionOneMinus",
+        "ShaderNodeTexImage":"unreal.MaterialExpressionTextureSampleParameter2D",
+        "ShaderNodeTexCoord":"unreal.MaterialExpressionTextureCoordinate",
+        "ShaderNodeValue":"unreal.MaterialExpressionConstant",
+        "ShaderNodeRGB":"unreal.MaterialExpressionConstant3Vector",
         # Math Node Operations
-        "ADD":"MaterialExpressionAdd",
-        "SUBTRACT":"MaterialExpressionSubtract",
-        "MULTIPLY":"MaterialExpressionMultiply",
-        "DIVIDE":"MaterialExpressionDivide",
-        "SINE":"MaterialExpressionSine",
-        "ARCSINE":"MaterialExpressionArcsine",
-        "COSINE":"MaterialExpressionCosine",
-        "ARCCOSINE":"MaterialExpressionArccossine",
-        "POWER":"MaterialExpressionPower",
-        "MINIMUM":"MaterialExpressionMin",
-        "MAXIMUM":"MaterialExpressionMax",
-        "ROUND":"MaterialExpressionRound",
-        "ABSOLUTE":"MaterialExpressionAbs",
+        "ADD":"unreal.MaterialExpressionAdd",
+        "SUBTRACT":"unreal.MaterialExpressionSubtract",
+        "MULTIPLY":"unreal.MaterialExpressionMultiply",
+        "DIVIDE":"unreal.MaterialExpressionDivide",
+        "SINE":"unreal.MaterialExpressionSine",
+        "ARCSINE":"unreal.MaterialExpressionArcsine",
+        "COSINE":"unreal.MaterialExpressionCosine",
+        "ARCCOSINE":"unreal.MaterialExpressionArccossine",
+        "POWER":"unreal.MaterialExpressionPower",
+        "MINIMUM":"unreal.MaterialExpressionMin",
+        "MAXIMUM":"unreal.MaterialExpressionMax",
+        "ROUND":"unreal.MaterialExpressionRound",
+        "ABSOLUTE":"unreal.MaterialExpressionAbs",
         # Mix RGB Blend Types
-        "MIX":"MaterialExpressionLinearInterpolate"
+        "MIX":"unreal.MaterialExpressionLinearInterpolate"
         }
         
         
@@ -58,13 +58,9 @@ class TransMatOperator(bpy.types.Operator):
                 print("import unreal")
                 print("")
                 print(f"{material.name}=unreal.AssetToolsHelpers.get_asset_tools().create_asset('{material.name}','{gamecontentdirectory}', unreal.Material, unreal.MaterialFactoryNew())")
+                print(f"{material.name}.set_editor_property('use_material_attributes',True)")
                 print("")
-                print("asset_path='/Game/'")
-                print("asset_registry = unreal.AssetRegistryHelpers.get_asset_registry()")
-                print(f"all_assets = asset_registry.get_assets_by_path(asset_path, recursive=True)")
-                print("for asset in all_assets:")
-                print(f"    if asset.asset_class == 'Material' and asset.asset_name == {material.name}:")
-                print("        current_material = unreal.EditorAssetLibrary.load_asset(asset.get_full_name())")
+                print("create_expression = unreal.MaterialEditingLibrary.create_material_expression")
                 print("")
                 
                 for node in nodes:
@@ -87,8 +83,8 @@ class TransMatOperator(bpy.types.Operator):
                         "Value": node.outputs[0].default_value
                         }
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('current_material','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
-                       
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]}-400)")
+                        
                         
                     # RGB node gives 4 float values for RGBA - alpha may be unnecessary
                     if node.bl_idname == "ShaderNodeRGB":
@@ -105,7 +101,7 @@ class TransMatOperator(bpy.types.Operator):
                         "B": round(node.outputs[0].default_value[2], 3),
                         }
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]                   
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('current_material','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)") 
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]}-400)")
                         
                     # Math node retrieves the operation: ADD, MULTIPLY, COSINE, etc
                     if node.bl_idname == "ShaderNodeMath":
@@ -114,7 +110,7 @@ class TransMatOperator(bpy.types.Operator):
                         
                         nodeinfo["Settings"] = {"Operation":node.operation}
                         nodeinfo["Unreal_Node"] = node_translate[node.operation]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('current_material','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]}-400)")
                         
                     # Principled BSDF looks at inputs, rather than outputs
                     if node.bl_idname == "ShaderNodeBsdfPrincipled":
@@ -147,7 +143,7 @@ class TransMatOperator(bpy.types.Operator):
 #                        str(round(node.inputs[19].default_value[1], 3)) + ",",
 #                        str(round(node.inputs[19].default_value[2], 3)) + ")")
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('current_material','unreal.{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                     # Mix Shader
                     if node.bl_idname == "ShaderNodeMixRGB":
 #                        print(node.name)
@@ -155,28 +151,28 @@ class TransMatOperator(bpy.types.Operator):
                         
                         nodeinfo["Settings"] = {"Blend Type":node.blend_type}
                         nodeinfo["Unreal_Node"] = node_translate[node.blend_type]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('{material.name}','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
                     # Texture Coordinate
                     if node.bl_idname =="ShaderNodeTexCoord":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('{material.name}','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
                     if node.bl_idname == "ShaderNodeTexImage":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('{material.name}','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
                     if node.bl_idname == "ShaderNodeInvert":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('{material.name}','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
                     if node.bl_idname == "ShaderNodeAddShader":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('{material.name}','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
                     if node.bl_idname == "ShaderNodeMixShader":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"unreal.MaterialEditingLibrary.create_material_expression('{material.name}','{nodeinfo['Unreal_Node']}',node_pos_x=0,node_pos_y=0)")
+                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
                     #looping through the outputs
                     for output in node.outputs:
