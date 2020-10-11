@@ -1,4 +1,5 @@
 import bpy
+import re
 from contextlib import redirect_stdout
 
 # Operator Code
@@ -21,6 +22,7 @@ class TransMatOperator(bpy.types.Operator):
         exportdirectory = "D:\Blender\Scripts\TransmatOutputs\_"
         
         node_translate = {
+        #"ShaderNodeOutputMaterial":"unreal.MaterialExpressionSetMaterialAttributes",
         "ShaderNodeBsdfPrincipled":"unreal.MaterialExpressionMakeMaterialAttributes",
         "ShaderNodeMixShader":"unreal.MaterialExpressionBlendMaterialAttributes",
         "ShaderNodeAddShader":"unreal.MaterialExpressionAdd",
@@ -47,13 +49,19 @@ class TransMatOperator(bpy.types.Operator):
         "MIX":"unreal.MaterialExpressionLinearInterpolate"
         }
         
+        inputsockets = []
+        
+        uenodes = []
+
+################################################################################        
+# Setting up the Unreal script
+################################################################################
         
         # Exporting the material as a .py file to be run in Unreal
         with open(f'{exportdirectory}{material.name}_TM.py', 'w') as textoutput:
-
+            # The file will contain all the print statements until execute
+            # returns 'FINISHED'
             with redirect_stdout(textoutput):
-                # The file will contain all the print statements until execute
-                # returns 'FINISHED'
                         
                 print("import unreal")
                 print("")
@@ -61,131 +69,170 @@ class TransMatOperator(bpy.types.Operator):
                 print(f"{material.name}.set_editor_property('use_material_attributes',True)")
                 print("")
                 print("create_expression = unreal.MaterialEditingLibrary.create_material_expression")
-                print("")
+                print("create_connection = unreal.MaterialEditingLibrary.connect_material_expressions")
                 
+################################################################################
+# Creating the Nodes
+################################################################################
+
+                print("")
                 for node in nodes:
 
                     nodeinfo = {
                     "Blender Node": node.bl_idname,
                     "Unreal_Node": "",
                     "Node ID": node.name,
-                    "Settings": {},
-                    "Links": {}
+                    "Settings": {}
                     }
                     
+                    uenodename = node.name.replace(".","").replace(" ","")
+                    node.name = uenodename
                     
                     # Value node contains a single float
                     if node.bl_idname == 'ShaderNodeValue':
-#                        print(":::Settings::: ")
-#                        print("Value: " + str(node.outputs[0].default_value))
-                        
-                        nodeinfo["Settings"] = {
-                        "Value": node.outputs[0].default_value
-                        }
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]}-400)")
-                        
                         
                     # RGB node gives 4 float values for RGBA - alpha may be unnecessary
                     if node.bl_idname == "ShaderNodeRGB":
-#                        print(":::Settings::: ")
-#                        print("RGBA: (" + 
-#                        str(round(node.outputs[0].default_value[0], 3)) + ",",
-#                        str(round(node.outputs[0].default_value[1], 3)) + ",",
-#                        str(round(node.outputs[0].default_value[2], 3)) + ",",
-#                        str(round(node.outputs[0].default_value[3], 3)) + ")")
-                        
-                        nodeinfo["Settings"] = {
-                        "R": round(node.outputs[0].default_value[0], 3),
-                        "G": round(node.outputs[0].default_value[1], 3),
-                        "B": round(node.outputs[0].default_value[2], 3),
-                        }
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]                   
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]}-400)")
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
                         
                     # Math node retrieves the operation: ADD, MULTIPLY, COSINE, etc
                     if node.bl_idname == "ShaderNodeMath":
-#                        print(":::Settings::: ")
-#                        print(node.operation)
-                        
                         nodeinfo["Settings"] = {"Operation":node.operation}
                         nodeinfo["Unreal_Node"] = node_translate[node.operation]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]}-400)")
                         
                     # Principled BSDF looks at inputs, rather than outputs
                     if node.bl_idname == "ShaderNodeBsdfPrincipled":
-#                        print(":::Settings::: ")
-#                        print("Base Color: (" + 
-#                        str(round(node.inputs[0].default_value[0], 3)) + ",",
-#                        str(round(node.inputs[0].default_value[1], 3)) + ",",
-#                        str(round(node.inputs[0].default_value[2], 3)) + ",",
-#                        str(round(node.inputs[0].default_value[3], 3)) + ")")
-#                        print("Subsurface Color: (" + 
-#                        str(round(node.inputs[3].default_value[0], 3)) + ",",
-#                        str(round(node.inputs[3].default_value[1], 3)) + ",",
-#                        str(round(node.inputs[3].default_value[2], 3)) + ",",
-#                        str(round(node.inputs[3].default_value[3], 3)) + ")")
-#                        print("Metallic: " + 
-#                        str(node.inputs[4].default_value))
-#                        print("Specular: " + 
-#                        str(node.inputs[5].default_value))
-#                        print("Roughness: " + 
-#                        str(node.inputs[7].default_value))
-#                        print("Emission: (" + 
-#                        str(round(node.inputs[17].default_value[0], 3)) + ",",
-#                        str(round(node.inputs[17].default_value[1], 3)) + ",",
-#                        str(round(node.inputs[17].default_value[2], 3)) + ",",
-#                        str(round(node.inputs[17].default_value[3], 3)) + ")")
-#                        print("Alpha: " + 
-#                        str(node.inputs[18].default_value))
-#                        print("Normal: (" + 
-#                        str(round(node.inputs[19].default_value[0], 3)) + ",",
-#                        str(round(node.inputs[19].default_value[1], 3)) + ",",
-#                        str(round(node.inputs[19].default_value[2], 3)) + ")")
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
-                    # Mix Shader
-                    if node.bl_idname == "ShaderNodeMixRGB":
-#                        print(node.name)
-#                        print(node.blend_type)
                         
+                    # Mix RGB Node retrieves the Blend Type
+                    if node.bl_idname == "ShaderNodeMixRGB":
                         nodeinfo["Settings"] = {"Blend Type":node.blend_type}
                         nodeinfo["Unreal_Node"] = node_translate[node.blend_type]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
                     # Texture Coordinate
                     if node.bl_idname =="ShaderNodeTexCoord":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
+                    # Image Texture Node    
                     if node.bl_idname == "ShaderNodeTexImage":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
+                    # Invert Node    
                     if node.bl_idname == "ShaderNodeInvert":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
+                    # Add Shader Node    
                     if node.bl_idname == "ShaderNodeAddShader":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
                         
+                    # Mix Shader Node    
                     if node.bl_idname == "ShaderNodeMixShader":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        print(f"create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")
-                        
+                    
+                    if node.bl_idname == 'ShaderNodeOutputMaterial':
+                         print("")   
+                    else:    
+                        print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
+                        uenodes.append(node)
+
+################################################################################
+# Inputting the values
+################################################################################
+                                
+                print("")        
+                for node in uenodes:
+                    if node.bl_idname == 'ShaderNodeValue':
+                        print(f"{node.name}.r = {node.outputs[0].default_value}")
+                    if node.bl_idname == "ShaderNodeRGB":
+                        print(f"{node.name}.constant = ({node.outputs[0].default_value[0]},{node.outputs[0].default_value[1]},{node.outputs[0].default_value[2]})")
+                                                
+################################################################################
+# Making the connections
+################################################################################                
+                
+                print("")        
+                for node in uenodes:
                     #looping through the outputs
                     for output in node.outputs:
                         # only checking those that are connected
                         if output.is_linked:
-                            # printing a nice, readable list of where the links start
-                            # and end
                             for link in output.links:
-                                nodeinfo["Links"] = {
-                                "From node-" + link.from_node.name : "Socket-" + link.from_socket.name,
-                                "To node-" + link.to_node.name : "Socket-" + link.to_socket.name
-                                }  
-        
+                                
+                                if link.to_node.bl_idname == 'ShaderNodeValue':
+                                    inputsockets = [
+                                    "A",
+                                    "B"
+                                    ]
+                                                                        
+                                if link.to_node.bl_idname == "ShaderNodeMath":
+                                    inputsockets = [
+                                    "A",
+                                    "B"
+                                    ]
+                                   
+                                if link.to_node.bl_idname == "ShaderNodeBsdfPrincipled":
+                                    inputsockets = [
+                                    "BaseColor",#0
+                                    "Subsurface",#1
+                                    "SubsurfaceRadius",#2
+                                    "SubsurfaceColor",#3
+                                    "Metallic",#4
+                                    "Specular",#5
+                                    "SpecularTint",#6
+                                    "Roughness",#7
+                                    "Anisotropy",#8
+                                    "AnisotropicRotation",#9
+                                    "Sheen",#10
+                                    "SheenTint",#11
+                                    "ClearCoat",#12
+                                    "ClearCoatRoughness",#13
+                                    "Refraction",#14
+                                    "Transmission",#15
+                                    "TransmissionRoughness",#16
+                                    "EmissiveColor",#17
+                                    "Opacity",#18
+                                    "Normal",#19
+                                    "ClearCoatNormal",#20
+                                    "Tangent"#21
+                                    ]
+                                    
+                                if link.to_node.bl_idname == "ShaderNodeMixRGB":
+                                    inputsockets = [
+                                    "A",
+                                    "B"
+                                    ]
+                                    
+                                if link.to_node.bl_idname == "ShaderNodeTexImage":
+                                    inputsockets = [
+                                    "UVs",
+                                    "B"
+                                    ]
+                                    
+                                if link.to_node.bl_idname == "ShaderNodeInvert":
+                                    inputsockets = [
+                                    "",
+                                    ""
+                                    ]
+                                    
+                                if link.to_node.bl_idname == "ShaderNodeAddShader":
+                                    inputsockets = [
+                                    "A",
+                                    "B"
+                                    ]
+                                    
+                                if link.to_node.bl_idname == "ShaderNodeMixShader":
+                                    inputsockets = [
+                                    "A",
+                                    "B"
+                                    ]
+                                    
+                                socketindex = link.to_socket.path_from_id()
+                                socketindex_formatted = re.search(r"\[([A-Za-z0-9_]+)\]", socketindex)    
+                                print(f"{node.name}_connection = create_connection({link.from_node.name},'',{link.to_node.name},'{inputsockets[int(socketindex_formatted.group(1))]}')")
+                                
+################################################################################
+                                                
         return {'FINISHED'}
 
 
