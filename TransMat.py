@@ -22,7 +22,7 @@ class TransMatOperator(bpy.types.Operator):
         exportdirectory = "D:\Blender\Scripts\TransmatOutputs\_"
         
         node_translate = {
-        #"ShaderNodeOutputMaterial":"unreal.MaterialExpressionSetMaterialAttributes",
+        "ShaderNodeOutputMaterial":"",
         "ShaderNodeBsdfPrincipled":"unreal.MaterialExpressionMakeMaterialAttributes",
         "ShaderNodeMixShader":"unreal.MaterialExpressionBlendMaterialAttributes",
         "ShaderNodeAddShader":"unreal.MaterialExpressionAdd",
@@ -70,12 +70,14 @@ class TransMatOperator(bpy.types.Operator):
                 print("")
                 print("create_expression = unreal.MaterialEditingLibrary.create_material_expression")
                 print("create_connection = unreal.MaterialEditingLibrary.connect_material_expressions")
+                print("connect_property = unreal.MaterialEditingLibrary.connect_material_property")
                 
 ################################################################################
 # Creating the Nodes
 ################################################################################
 
                 print("")
+                print("### Nodes")
                 for node in nodes:
 
                     nodeinfo = {
@@ -98,7 +100,6 @@ class TransMatOperator(bpy.types.Operator):
                         
                     # Math node retrieves the operation: ADD, MULTIPLY, COSINE, etc
                     if node.bl_idname == "ShaderNodeMath":
-                        nodeinfo["Settings"] = {"Operation":node.operation}
                         nodeinfo["Unreal_Node"] = node_translate[node.operation]
                         
                     # Principled BSDF looks at inputs, rather than outputs
@@ -107,7 +108,6 @@ class TransMatOperator(bpy.types.Operator):
                         
                     # Mix RGB Node retrieves the Blend Type
                     if node.bl_idname == "ShaderNodeMixRGB":
-                        nodeinfo["Settings"] = {"Blend Type":node.blend_type}
                         nodeinfo["Unreal_Node"] = node_translate[node.blend_type]
                         
                     # Texture Coordinate
@@ -128,11 +128,9 @@ class TransMatOperator(bpy.types.Operator):
                         
                     # Mix Shader Node    
                     if node.bl_idname == "ShaderNodeMixShader":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]      
                     
-                    if node.bl_idname == 'ShaderNodeOutputMaterial':
-                         print("")   
-                    else:    
+                    if not node.bl_idname == 'ShaderNodeOutputMaterial':    
                         print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
                         uenodes.append(node)
 
@@ -140,18 +138,41 @@ class TransMatOperator(bpy.types.Operator):
 # Inputting the values
 ################################################################################
                                 
-                print("")        
+                print("")
+                print("### Settings")        
                 for node in uenodes:
-                    if node.bl_idname == 'ShaderNodeValue':
-                        print(f"{node.name}.r = {node.outputs[0].default_value}")
-                    if node.bl_idname == "ShaderNodeRGB":
-                        print(f"{node.name}.constant = ({node.outputs[0].default_value[0]},{node.outputs[0].default_value[1]},{node.outputs[0].default_value[2]})")
-                                                
+                            if node.bl_idname == 'ShaderNodeValue':
+                                print(f"{node.name}.r = {node.outputs[0].default_value}")
+                                
+                            if node.bl_idname == "ShaderNodeRGB":
+                                print(f"{node.name}.constant = ({node.outputs[0].default_value[0]},{node.outputs[0].default_value[1]},{node.outputs[0].default_value[2]})")
+                            
+#                            if node.bl_idname == "ShaderNodeMath":
+#                                for input in node.inputs:
+#                                    if not input.is_linked:
+#                                #if not node.inputs[0].is_linked:
+#                                        print(f"{node.name}.const_a = {node.inputs[0].default_value}")
+#                                #if not node.inputs[1].is_linked:    
+#                                        print(f"{node.name}.const_b = {node.inputs[1].default_value}")
+                                
+        #                    if node.bl_idname == "ShaderNodeMixRGB":
+        #                        #if not node.inputs[1].is_linked:
+        #                            #print(f"{node.name}.const_a = ({node.inputs[1].default_value[0]},{node.inputs[1].default_value[1]},{node.inputs[1].default_value[2]})")
+        #                        #if not node.inputs[2].is_linked:    
+        #                            #print(f"{node.name}.const_b = ({node.inputs[2].default_value[0]},{node.inputs[2].default_value[1]},{node.inputs[2].default_value[2]})")
+        #                        if not node.inputs[0].is_linked:
+        #                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
+                                
+#                            if node.bl_idname == "ShaderNodeMixShader":
+#                                if not node.inputs[0].is_linked:
+#                                    print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
+                                                       
 ################################################################################
 # Making the connections
 ################################################################################                
                 
-                print("")        
+                print("")
+                print("### Connections")        
                 for node in uenodes:
                     #looping through the outputs
                     for output in node.outputs:
@@ -227,9 +248,13 @@ class TransMatOperator(bpy.types.Operator):
                                     "B"
                                     ]
                                     
-                                socketindex = link.to_socket.path_from_id()
-                                socketindex_formatted = re.search(r"\[([A-Za-z0-9_]+)\]", socketindex)    
-                                print(f"{node.name}_connection = create_connection({link.from_node.name},'',{link.to_node.name},'{inputsockets[int(socketindex_formatted.group(1))]}')")
+                                if link.to_node.bl_idname == "ShaderNodeOutputMaterial":
+                                    print(f"{node.name}_connection = connect_property({link.from_node.name},'','MaterialAttributes')")
+                                
+                                if not link.to_node.bl_idname == "ShaderNodeOutputMaterial":    
+                                    socketindex = link.to_socket.path_from_id()
+                                    socketindex_formatted = re.search(r"\[([A-Za-z0-9_]+)\]", socketindex)    
+                                    print(f"{node.name}_connection = create_connection({link.from_node.name},'',{link.to_node.name},'{inputsockets[int(socketindex_formatted.group(1))]}')")
                                 
 ################################################################################
                                                 
