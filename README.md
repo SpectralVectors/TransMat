@@ -18,14 +18,24 @@ Transmat will find and import all the image textures from your Blender material,
 # Currently supported Blender Nodes
 
 Principled BSDF
+
 Mix Shader
+
 Add Shader
+
 Invert
+
 Image Texture
+
 Texture Coordinate
+
 Value
+
 RGB
+
 Math - Add, Subtract, Multiply, Divide, Sine, Arcsine, Cosine, Arccosine, Power, Minimum, Maximum, Round, Absolute
+
 MixRGB - Mix mode only for the moment
+
 Reroute
 
