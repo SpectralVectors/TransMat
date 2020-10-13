@@ -27,7 +27,7 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeMixShader":"unreal.MaterialExpressionBlendMaterialAttributes",
         "ShaderNodeAddShader":"unreal.MaterialExpressionAdd",
         "ShaderNodeInvert":"unreal.MaterialExpressionOneMinus",
-        "ShaderNodeTexImage":"unreal.MaterialExpressionTextureSampleParameter2D",
+        "ShaderNodeTexImage":"unreal.MaterialExpressionTextureSample",
         "ShaderNodeTexCoord":"unreal.MaterialExpressionTextureCoordinate",
         "ShaderNodeValue":"unreal.MaterialExpressionConstant",
         "ShaderNodeRGB":"unreal.MaterialExpressionConstant3Vector",
@@ -71,6 +71,33 @@ class TransMatOperator(bpy.types.Operator):
                 print("create_expression = unreal.MaterialEditingLibrary.create_material_expression")
                 print("create_connection = unreal.MaterialEditingLibrary.connect_material_expressions")
                 print("connect_property = unreal.MaterialEditingLibrary.connect_material_property")
+                print(f"tasks = []")
+                #print(f"results = []")
+                
+################################################################################
+# Importing the textures
+################################################################################
+                
+                print("")
+                print("### Textures")
+                for node in nodes:
+                    if node.bl_idname == "ShaderNodeTexImage":
+                        print("")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')} = '{str(node.image.filepath_from_user())}'")
+                        print("")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import = unreal.AssetImportTask()")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('automated',True)")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('destination_path','{gamecontentdirectory}')")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('destination_name','{str(node.image.filepath).replace('/','').replace('.','_')}')")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('factory',unreal.TextureFactory())")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('filename',{str(node.image.filepath).replace('/','').replace('.','_')})")                
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('replace_existing',True)")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('save',True)")
+                        #print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.get_editor_property('result') = unreal.Texture")
+                        print(f"tasks.append({str(node.image.filepath).replace('/','').replace('.','_')}_import)")
+                        #print(f"results.append({str(node.image.filepath).replace('/','').replace('.','_')}_import.result)")
+                print("")
+                print(f"unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(tasks)")
                 
 ################################################################################
 # Creating the Nodes
@@ -133,54 +160,57 @@ class TransMatOperator(bpy.types.Operator):
                     if not node.bl_idname == 'ShaderNodeOutputMaterial':    
                         print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
                         uenodes.append(node)
+#                    if node.bl_idname == "ShaderNodeTexImage":
+#                        print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')}")
+                        #print(f"{node.name}.set_editor_property('texture','{gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}.{str(node.image.filepath).replace('/','').replace('.','_')}')")
+                        #print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')}")
+                        #print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')}")
+#                        print(f"{node.name}.set_editor_property('texture', {str(node.image.filepath).replace('/','')[:-4]})")
+#                         print(f"{node.name}.texture={str(node.image.filepath).replace('/','').replace('.','_')[:-4]}")
+                        
+################################################################################
+# Load Images into Nodes
+################################################################################
 
-################################################################################
-# Inputting the values
-################################################################################
-                                
-                print("")
-                print("### Settings")        
-                for node in uenodes:
-                            if node.bl_idname == 'ShaderNodeValue':
-                                print(f"{node.name}.r = {node.outputs[0].default_value}")
-                                
-                            if node.bl_idname == "ShaderNodeRGB":
-                                print(f"{node.name}.constant = ({node.outputs[0].default_value[0]},{node.outputs[0].default_value[1]},{node.outputs[0].default_value[2]})")
-                            
-#                            if node.bl_idname == "ShaderNodeMath":
-#                                for input in node.inputs:
-#                                    if not input.is_linked:
-#                                #if not node.inputs[0].is_linked:
-#                                        print(f"{node.name}.const_a = {node.inputs[0].default_value}")
-#                                #if not node.inputs[1].is_linked:    
-#                                        print(f"{node.name}.const_b = {node.inputs[1].default_value}")
-                                
-        #                    if node.bl_idname == "ShaderNodeMixRGB":
-        #                        #if not node.inputs[1].is_linked:
-        #                            #print(f"{node.name}.const_a = ({node.inputs[1].default_value[0]},{node.inputs[1].default_value[1]},{node.inputs[1].default_value[2]})")
-        #                        #if not node.inputs[2].is_linked:    
-        #                            #print(f"{node.name}.const_b = ({node.inputs[2].default_value[0]},{node.inputs[2].default_value[1]},{node.inputs[2].default_value[2]})")
-        #                        if not node.inputs[0].is_linked:
-        #                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
-                                
-#                            if node.bl_idname == "ShaderNodeMixShader":
-#                                if not node.inputs[0].is_linked:
-#                                    print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
-                                                       
+#                print("")
+#                print("### Load Images into Nodes")        
+#                for node in uenodes:
+#                    if node.bl_idname == "ShaderNodeTexImage":
+#                        #print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')[:-4]}")
+#                        #print(f"{node.name}.set_editor_property('texture', {str(node.image.filepath).replace('/','')[:-4]})")
+#                        print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')[:-4]}")
 ################################################################################
 # Making the connections
 ################################################################################                
-                
+                                
                 print("")
                 print("### Connections")        
                 for node in uenodes:
+#                    if node.bl_idname == "ShaderNodeTexImage":
+#                        print(f"{node.name}.texture = {str(node.image.filepath).replace('/','')[:-4]}")
+#                        print(f"{node.name}.set_editor_property('automatic_view_mip_bias',False)")
+#                         print(f"{node.name}.set_editor_property('texture', {str(node.image.filepath).replace('/','')[:-4]})")
+                        
+                    for input in node.inputs:
+                            if node.bl_idname == "ShaderNodeMath":
+                                if not node.inputs[0].is_linked:
+                                    print(f"{node.name}.const_a = {node.inputs[0].default_value}")
+                                if not node.inputs[1].is_linked:    
+                                    print(f"{node.name}.const_b = {node.inputs[1].default_value}")
+                    
+
                     #looping through the outputs
                     for output in node.outputs:
                         # only checking those that are connected
                         if output.is_linked:
                             for link in output.links:
+                               
+                                if node.bl_idname == "ShaderNodeRGB":
+                                    print(f"{node.name}.constant = ({node.outputs[0].default_value[0]},{node.outputs[0].default_value[1]},{node.outputs[0].default_value[2]})")
+                            
                                 
-                                if link.to_node.bl_idname == 'ShaderNodeValue':
+                                if node.bl_idname == 'ShaderNodeValue':
+                                    print(f"{node.name}.r = {node.outputs[0].default_value}")
                                     inputsockets = [
                                     "A",
                                     "B"
@@ -249,14 +279,38 @@ class TransMatOperator(bpy.types.Operator):
                                     ]
                                     
                                 if link.to_node.bl_idname == "ShaderNodeOutputMaterial":
-                                    print(f"{node.name}_connection = connect_property({link.from_node.name},'','MaterialAttributes')")
+                                    print("")
+                                    #print(f"{node.name}_connection = connect_property({link.from_node.name},'','Material Attributes')")
                                 
                                 if not link.to_node.bl_idname == "ShaderNodeOutputMaterial":    
                                     socketindex = link.to_socket.path_from_id()
                                     socketindex_formatted = re.search(r"\[([A-Za-z0-9_]+)\]", socketindex)    
                                     print(f"{node.name}_connection = create_connection({link.from_node.name},'',{link.to_node.name},'{inputsockets[int(socketindex_formatted.group(1))]}')")
-                                
+                   
 ################################################################################
+# Inputting the values
+################################################################################
+                                
+                print("")
+                print("### Settings")        
+                for node in uenodes:
+                        
+                    if node.bl_idname == "ShaderNodeMixRGB":
+                        if not node.inputs[1].is_linked:
+                            print(f"{node.name}.const_a = ({node.inputs[1].default_value[0]},{node.inputs[1].default_value[1]},{node.inputs[1].default_value[2]})")
+                        if not node.inputs[2].is_linked:    
+                            print(f"{node.name}.const_b = ({node.inputs[2].default_value[0]},{node.inputs[2].default_value[1]},{node.inputs[2].default_value[2]})")
+                        if not node.inputs[0].is_linked:
+                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
+                    
+                    if node.bl_idname == "ShaderNodeMixShader":
+                        if not node.inputs[0].is_linked:
+                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
+
+
+                                                                                   
+################################################################################
+
                                                 
         return {'FINISHED'}
 
