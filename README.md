@@ -1,7 +1,7 @@
 # TransMat
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
-# Desctription
+# Description
 
 TransMat is an Add-on for Blender's Node Editor.
 
