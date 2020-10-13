@@ -93,9 +93,7 @@ class TransMatOperator(bpy.types.Operator):
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('filename',{str(node.image.filepath).replace('/','').replace('.','_')})")                
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('replace_existing',True)")
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('save',True)")
-                        #print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.get_editor_property('result') = unreal.Texture")
                         print(f"tasks.append({str(node.image.filepath).replace('/','').replace('.','_')}_import)")
-                        #print(f"results.append({str(node.image.filepath).replace('/','').replace('.','_')}_import.result)")
                 print("")
                 print(f"unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(tasks)")
                 
@@ -160,25 +158,7 @@ class TransMatOperator(bpy.types.Operator):
                     if not node.bl_idname == 'ShaderNodeOutputMaterial':    
                         print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
                         uenodes.append(node)
-#                    if node.bl_idname == "ShaderNodeTexImage":
-#                        print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')}")
-                        #print(f"{node.name}.set_editor_property('texture','{gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}.{str(node.image.filepath).replace('/','').replace('.','_')}')")
-                        #print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')}")
-                        #print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')}")
-#                        print(f"{node.name}.set_editor_property('texture', {str(node.image.filepath).replace('/','')[:-4]})")
-#                         print(f"{node.name}.texture={str(node.image.filepath).replace('/','').replace('.','_')[:-4]}")
-                        
-################################################################################
-# Load Images into Nodes
-################################################################################
 
-#                print("")
-#                print("### Load Images into Nodes")        
-#                for node in uenodes:
-#                    if node.bl_idname == "ShaderNodeTexImage":
-#                        #print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')[:-4]}")
-#                        #print(f"{node.name}.set_editor_property('texture', {str(node.image.filepath).replace('/','')[:-4]})")
-#                        print(f"{node.name}.texture = {str(node.image.filepath).replace('/','').replace('.','_')[:-4]}")
 ################################################################################
 # Making the connections
 ################################################################################                
@@ -186,10 +166,6 @@ class TransMatOperator(bpy.types.Operator):
                 print("")
                 print("### Connections")        
                 for node in uenodes:
-#                    if node.bl_idname == "ShaderNodeTexImage":
-#                        print(f"{node.name}.texture = {str(node.image.filepath).replace('/','')[:-4]}")
-#                        print(f"{node.name}.set_editor_property('automatic_view_mip_bias',False)")
-#                         print(f"{node.name}.set_editor_property('texture', {str(node.image.filepath).replace('/','')[:-4]})")
                         
                     for input in node.inputs:
                             if node.bl_idname == "ShaderNodeMath":
@@ -288,7 +264,7 @@ class TransMatOperator(bpy.types.Operator):
                                     print(f"{node.name}_connection = create_connection({link.from_node.name},'',{link.to_node.name},'{inputsockets[int(socketindex_formatted.group(1))]}')")
                    
 ################################################################################
-# Inputting the values
+# Inputting the values & Images into Nodes
 ################################################################################
                                 
                 print("")
@@ -303,11 +279,12 @@ class TransMatOperator(bpy.types.Operator):
                         if not node.inputs[0].is_linked:
                             print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
                     
-                    if node.bl_idname == "ShaderNodeMixShader":
-                        if not node.inputs[0].is_linked:
-                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
+#                    if node.bl_idname == "ShaderNodeMixShader":
+#                        if not node.inputs[0].is_linked:
+#                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
 
-
+                    if node.bl_idname == "ShaderNodeTexImage":
+                        print(f"{node.name}.texture = unreal.load_asset('{gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}')")
                                                                                    
 ################################################################################
 
