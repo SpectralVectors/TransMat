@@ -2,6 +2,16 @@ import bpy
 import re
 from contextlib import redirect_stdout
 
+bl_info = {
+    'name': 'TransMat',
+    'category': 'Node Editor',
+    'author': 'Spectral Vectors',
+    'version': (0, 1, 0),
+    'blender': (2, 90, 0),
+    'location': 'Node Editor',
+    "description": "Automatically recreates Blender materials in Unreal"
+}
+
 # Operator Code
 
 class TransMatOperator(bpy.types.Operator):
