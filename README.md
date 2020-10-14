@@ -19,27 +19,27 @@ Transmat will find and import all the image textures from your Blender material,
 
 Principled BSDF
 
-Mix Shader
-
-Add Shader
-
-Invert
-
 Image Texture
 
 Texture Coordinate
 
 UV Map
 
+Mix Shader
+
+Add Shader
+
+Math - Add, Subtract, Multiply, Divide, Sine, Arcsine, Cosine, Arccosine, Power, Minimum, Maximum, Round, Absolute
+
+MixRGB - Mix, Color Burn, Color Dodge, Darken, Difference, Lighten, Linear Light, Overlay, Screen, Soft Light
+
+Invert
+
 Fresnel
 
 Value
 
 RGB
-
-Math - Add, Subtract, Multiply, Divide, Sine, Arcsine, Cosine, Arccosine, Power, Minimum, Maximum, Round, Absolute
-
-MixRGB - Mix, Color Burn, Color Dodge, Darken, Difference, Lighten, Linear Light, Overlay, Screen, Soft Light
 
 Reroute
 
