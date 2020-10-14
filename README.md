@@ -29,6 +29,10 @@ Image Texture
 
 Texture Coordinate
 
+UV Map
+
+Fresnel
+
 Value
 
 RGB
