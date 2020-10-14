@@ -6,7 +6,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 1, 0),
+    'version': (0, 1, 1),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -59,6 +59,10 @@ class TransMatOperator(bpy.types.Operator):
         "MAXIMUM":"unreal.MaterialExpressionMax",
         "ROUND":"unreal.MaterialExpressionRound",
         "ABSOLUTE":"unreal.MaterialExpressionAbs",
+        # Vector Math Node Operations
+        "NORMALIZE":"unreal.MaterialExpressionNormalize",
+        "DOT_PRODUCT":"unreal.MaterialExpressionDotProduct",
+        "CROSS_PRODUCT":"unreal.MaterialExpressionCrossProduct",
         # Mix RGB Blend Types
         "MIX":"unreal.MaterialExpressionLinearInterpolate",
         "BURN":"unreal.MaterialExpressionMaterialFunctionCall",
@@ -141,54 +145,18 @@ class TransMatOperator(bpy.types.Operator):
                     # Math node retrieves the operation: ADD, MULTIPLY, COSINE, etc
                     if node.bl_idname == "ShaderNodeMath":
                         nodeinfo["Unreal_Node"] = node_translate[node.operation]
+                        
+                    # Math node retrieves the operation: NORMALIZE, CROSS_PRODUCT etc
+                    if node.bl_idname == "ShaderNodeVectorMath":
+                        nodeinfo["Unreal_Node"] = node_translate[node.operation]
                             
                     # Mix RGB Node retrieves the Blend Type
                     if node.bl_idname == "ShaderNodeMixRGB":
                         nodeinfo["Unreal_Node"] = node_translate[node.blend_type]                    
-                        
-                    # Principled BSDF looks at inputs, rather than outputs
-                    if node.bl_idname == "ShaderNodeBsdfPrincipled":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
                     
-                    # Value node contains a single float
-                    if node.bl_idname == 'ShaderNodeValue':
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    # RGB node gives 4 float values for RGBA - alpha may be unnecessary
-                    if node.bl_idname == "ShaderNodeRGB":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    # Texture Coordinate
-                    if node.bl_idname =="ShaderNodeTexCoord":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                    
-                    if node.bl_idname =="ShaderNodeUVMap":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    # Image Texture Node    
-                    if node.bl_idname == "ShaderNodeTexImage":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    # Invert Node    
-                    if node.bl_idname == "ShaderNodeInvert":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    # Add Shader Node    
-                    if node.bl_idname == "ShaderNodeAddShader":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    # Mix Shader Node    
-                    if node.bl_idname == "ShaderNodeMixShader":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    if node.bl_idname == "NodeReroute":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    if node.bl_idname == "ShaderNodeSeparateRGB":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    if node.bl_idname == "ShaderNodeFresnel":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]                           
+                    # For all other node types, use the bl.id_name
+                    if not node.bl_idname == "ShaderNodeMixRGB" and not node.bl_idname == "ShaderNodeMath" and not node.bl_idname == "ShaderNodeVectorMath":
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]                          
                     
                     if not node.bl_idname == 'ShaderNodeOutputMaterial':    
                         print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
@@ -270,6 +238,12 @@ class TransMatOperator(bpy.types.Operator):
                                     inputsockets = [
                                     "A",
                                     "B"
+                                    ]
+                                
+                                if link.to_node.bl_idname == "ShaderNodeVectorMath" and link.to_node.operation == "NORMALIZE":
+                                    inputsockets = [
+                                    "VectorInput",
+                                    ""
                                     ]
                                     
                                 if link.to_node.bl_idname == "ShaderNodeSeparateRGB":
