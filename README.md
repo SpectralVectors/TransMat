@@ -35,7 +35,7 @@ RGB
 
 Math - Add, Subtract, Multiply, Divide, Sine, Arcsine, Cosine, Arccosine, Power, Minimum, Maximum, Round, Absolute
 
-MixRGB - Mix mode only for the moment
+MixRGB - Mix, Color Burn, Color Dodge, Darken, Difference, Lighten, Linear Light, Overlay, Screen, Soft Light
 
 Reroute
 
