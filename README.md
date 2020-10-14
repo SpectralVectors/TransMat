@@ -31,6 +31,8 @@ Add Shader
 
 Math - Add, Subtract, Multiply, Divide, Sine, Arcsine, Cosine, Arccosine, Power, Minimum, Maximum, Round, Absolute
 
+Vector Math - Normalize, Dot Product, Cross Product
+
 MixRGB - Mix, Color Burn, Color Dodge, Darken, Difference, Lighten, Linear Light, Overlay, Screen, Soft Light
 
 Invert
