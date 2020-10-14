@@ -22,6 +22,8 @@ class TransMatOperator(bpy.types.Operator):
         exportdirectory = "D:\Blender\Scripts\TransmatOutputs\_"
         
         node_translate = {
+        "ShaderNodeFresnel":"unreal.MaterialExpressionFresnel",
+        "ShaderNodeUVMap":"unreal.MaterialExpressionTextureCoordinate",
         "ShaderNodeSeparateRGB":"unreal.MaterialExpressionMaterialFunctionCall",
         "NodeReroute":"unreal.MaterialExpressionReroute",
         "ShaderNodeOutputMaterial":"",
@@ -125,6 +127,18 @@ class TransMatOperator(bpy.types.Operator):
                     
                     uenodename = node.name.replace(".","").replace(" ","")
                     node.name = uenodename
+                                            
+                    # Math node retrieves the operation: ADD, MULTIPLY, COSINE, etc
+                    if node.bl_idname == "ShaderNodeMath":
+                        nodeinfo["Unreal_Node"] = node_translate[node.operation]
+                            
+                    # Mix RGB Node retrieves the Blend Type
+                    if node.bl_idname == "ShaderNodeMixRGB":
+                        nodeinfo["Unreal_Node"] = node_translate[node.blend_type]                    
+                        
+                    # Principled BSDF looks at inputs, rather than outputs
+                    if node.bl_idname == "ShaderNodeBsdfPrincipled":
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
                     
                     # Value node contains a single float
                     if node.bl_idname == 'ShaderNodeValue':
@@ -134,20 +148,11 @@ class TransMatOperator(bpy.types.Operator):
                     if node.bl_idname == "ShaderNodeRGB":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
                         
-                    # Math node retrieves the operation: ADD, MULTIPLY, COSINE, etc
-                    if node.bl_idname == "ShaderNodeMath":
-                        nodeinfo["Unreal_Node"] = node_translate[node.operation]
-                        
-                    # Principled BSDF looks at inputs, rather than outputs
-                    if node.bl_idname == "ShaderNodeBsdfPrincipled":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
-                        
-                    # Mix RGB Node retrieves the Blend Type
-                    if node.bl_idname == "ShaderNodeMixRGB":
-                        nodeinfo["Unreal_Node"] = node_translate[node.blend_type]
-                        
                     # Texture Coordinate
                     if node.bl_idname =="ShaderNodeTexCoord":
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
+                    
+                    if node.bl_idname =="ShaderNodeUVMap":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
                         
                     # Image Texture Node    
@@ -170,12 +175,14 @@ class TransMatOperator(bpy.types.Operator):
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
                         
                     if node.bl_idname == "ShaderNodeSeparateRGB":
-                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]      
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
+                        
+                    if node.bl_idname == "ShaderNodeFresnel":
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]                           
                     
                     if not node.bl_idname == 'ShaderNodeOutputMaterial':    
                         print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
                         uenodes.append(node)
-
 
 ################################################################################
 # Loading Material Functions and Image Textures
@@ -184,34 +191,33 @@ class TransMatOperator(bpy.types.Operator):
                 print("")
                 print("### Material Functions")        
                 for node in uenodes:
-                    if node.bl_idname == "ShaderNodeMixRGB" and nodeinfo["Unreal_Node"] == "unreal.MaterialExpressionMaterialFunctionCall":
-                        if node.blend_type == 'BURN':
-                            print(f"mat_func_burn = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorBurn')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_burn)")
-                        if node.blend_type == 'DODGE':
-                            print(f"mat_func_dodge = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorDodge')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_dodge)")
-                        if node.blend_type == 'DARKEN':
-                            print(f"mat_func_darken = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Darken')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_darken)")
-                        if node.blend_type == 'DIFFERENCE':
-                            print(f"mat_func_difference = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Difference')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_difference)")
-                        if node.blend_type == 'LIGHTEN':
-                            print(f"mat_func_lighten = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Lighten')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_lighten)")
-                        if node.blend_type == 'LINEAR_LIGHT':
-                            print(f"mat_func_linear_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_LinearLight')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_linear_light)")
-                        if node.blend_type == 'OVERLAY':
-                            print(f"mat_func_overlay = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Overlay')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_overlay)")
-                        if node.blend_type == 'SCREEN':
-                            print(f"mat_func_screen = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Screen')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_screen)")
-                        if node.blend_type == 'SOFT_LIGHT':
-                            print(f"mat_func_soft_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_SoftLight')")
-                            print(f"{node.name}.set_editor_property('material_function',mat_func_soft_light)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'BURN':
+                        print(f"mat_func_burn = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorBurn')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_burn)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'DODGE':
+                        print(f"mat_func_dodge = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorDodge')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_dodge)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'DARKEN':
+                        print(f"mat_func_darken = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Darken')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_darken)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'DIFFERENCE':
+                        print(f"mat_func_difference = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Difference')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_difference)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'LIGHTEN':
+                        print(f"mat_func_lighten = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Lighten')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_lighten)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'LINEAR_LIGHT':
+                        print(f"mat_func_linear_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_LinearLight')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_linear_light)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'OVERLAY':
+                        print(f"mat_func_overlay = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Overlay')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_overlay)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'SCREEN':
+                        print(f"mat_func_screen = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Screen')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_screen)")
+                    if node.bl_idname == "ShaderNodeMixRGB" and node.blend_type == 'SOFT_LIGHT':
+                        print(f"mat_func_soft_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_SoftLight')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_soft_light)")
                         
                     if node.bl_idname == "ShaderNodeSeparateRGB":
                         print(f"mat_func_separate = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components')")
@@ -239,20 +245,17 @@ class TransMatOperator(bpy.types.Operator):
                     for output in node.outputs:
                         # only checking those that are connected
                         if output.is_linked:
-                            for link in output.links:
-                               
+                            for link in output.links:                               
                                 if node.bl_idname == "ShaderNodeRGB":
                                     print(f"{node.name}.constant = ({node.outputs[0].default_value[0]},{node.outputs[0].default_value[1]},{node.outputs[0].default_value[2]})")
-                            
-                                
+                                                            
                                 if node.bl_idname == 'ShaderNodeValue':
                                     print(f"{node.name}.r = {node.outputs[0].default_value}")
                                     inputsockets = [
                                     "A",
                                     "B"
                                     ]
-                                
-                                                                        
+                                                                                                        
                                 if link.to_node.bl_idname == "ShaderNodeMath":
                                     inputsockets = [
                                     "A",
@@ -347,8 +350,9 @@ class TransMatOperator(bpy.types.Operator):
                                                 
         return {'FINISHED'}
 
-
+################################################################################
 # Panel UI
+################################################################################
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
