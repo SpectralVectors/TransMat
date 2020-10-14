@@ -22,6 +22,8 @@ class TransMatOperator(bpy.types.Operator):
         exportdirectory = "D:\Blender\Scripts\TransmatOutputs\_"
         
         node_translate = {
+        "ShaderNodeSeparateRGB":"unreal.MaterialExpressionMaterialFunctionCall",
+        "NodeReroute":"unreal.MaterialExpressionReroute",
         "ShaderNodeOutputMaterial":"",
         "ShaderNodeBsdfPrincipled":"unreal.MaterialExpressionMakeMaterialAttributes",
         "ShaderNodeMixShader":"unreal.MaterialExpressionBlendMaterialAttributes",
@@ -46,7 +48,16 @@ class TransMatOperator(bpy.types.Operator):
         "ROUND":"unreal.MaterialExpressionRound",
         "ABSOLUTE":"unreal.MaterialExpressionAbs",
         # Mix RGB Blend Types
-        "MIX":"unreal.MaterialExpressionLinearInterpolate"
+        "MIX":"unreal.MaterialExpressionLinearInterpolate",
+        "BURN":"unreal.MaterialExpressionMaterialFunctionCall",
+        "DODGE":"unreal.MaterialExpressionMaterialFunctionCall",
+        "DARKEN":"unreal.MaterialExpressionMaterialFunctionCall",
+        "DIFFERENCE":"unreal.MaterialExpressionMaterialFunctionCall",
+        "LIGHTEN":"unreal.MaterialExpressionMaterialFunctionCall",
+        "LINEAR_LIGHT":"unreal.MaterialExpressionMaterialFunctionCall",
+        "OVERLAY":"unreal.MaterialExpressionMaterialFunctionCall",
+        "SCREEN":"unreal.MaterialExpressionMaterialFunctionCall",
+        "SOFT_LIGHT":"unreal.MaterialExpressionMaterialFunctionCall",
         }
         
         inputsockets = []
@@ -153,11 +164,62 @@ class TransMatOperator(bpy.types.Operator):
                         
                     # Mix Shader Node    
                     if node.bl_idname == "ShaderNodeMixShader":
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
+                        
+                    if node.bl_idname == "NodeReroute":
+                        nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]
+                        
+                    if node.bl_idname == "ShaderNodeSeparateRGB":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]      
                     
                     if not node.bl_idname == 'ShaderNodeOutputMaterial':    
                         print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
                         uenodes.append(node)
+
+
+################################################################################
+# Loading Material Functions and Image Textures
+################################################################################                
+                                
+                print("")
+                print("### Material Functions")        
+                for node in uenodes:
+                    if node.bl_idname == "ShaderNodeMixRGB" and nodeinfo["Unreal_Node"] == "unreal.MaterialExpressionMaterialFunctionCall":
+                        if node.blend_type == 'BURN':
+                            print(f"mat_func_burn = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorBurn')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_burn)")
+                        if node.blend_type == 'DODGE':
+                            print(f"mat_func_dodge = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorDodge')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_dodge)")
+                        if node.blend_type == 'DARKEN':
+                            print(f"mat_func_darken = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Darken')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_darken)")
+                        if node.blend_type == 'DIFFERENCE':
+                            print(f"mat_func_difference = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Difference')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_difference)")
+                        if node.blend_type == 'LIGHTEN':
+                            print(f"mat_func_lighten = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Lighten')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_lighten)")
+                        if node.blend_type == 'LINEAR_LIGHT':
+                            print(f"mat_func_linear_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_LinearLight')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_linear_light)")
+                        if node.blend_type == 'OVERLAY':
+                            print(f"mat_func_overlay = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Overlay')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_overlay)")
+                        if node.blend_type == 'SCREEN':
+                            print(f"mat_func_screen = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Screen')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_screen)")
+                        if node.blend_type == 'SOFT_LIGHT':
+                            print(f"mat_func_soft_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_SoftLight')")
+                            print(f"{node.name}.set_editor_property('material_function',mat_func_soft_light)")
+                        
+                    if node.bl_idname == "ShaderNodeSeparateRGB":
+                        print(f"mat_func_separate = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components')")
+                        print(f"{node.name}.set_editor_property('material_function',mat_func_separate)")
+
+                    if node.bl_idname == "ShaderNodeTexImage":
+                        print(f"{node.name}.texture = unreal.load_asset('{gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}')")
+
 
 ################################################################################
 # Making the connections
@@ -166,15 +228,13 @@ class TransMatOperator(bpy.types.Operator):
                 print("")
                 print("### Connections")        
                 for node in uenodes:
-                        
                     for input in node.inputs:
                             if node.bl_idname == "ShaderNodeMath":
                                 if not node.inputs[0].is_linked:
                                     print(f"{node.name}.const_a = {node.inputs[0].default_value}")
                                 if not node.inputs[1].is_linked:    
                                     print(f"{node.name}.const_b = {node.inputs[1].default_value}")
-                    
-
+                                    
                     #looping through the outputs
                     for output in node.outputs:
                         # only checking those that are connected
@@ -191,11 +251,18 @@ class TransMatOperator(bpy.types.Operator):
                                     "A",
                                     "B"
                                     ]
+                                
                                                                         
                                 if link.to_node.bl_idname == "ShaderNodeMath":
                                     inputsockets = [
                                     "A",
                                     "B"
+                                    ]
+                                    
+                                if link.to_node.bl_idname == "ShaderNodeSeparateRGB":
+                                    inputsockets = [
+                                    "Float3",
+                                    ""
                                     ]
                                    
                                 if link.to_node.bl_idname == "ShaderNodeBsdfPrincipled":
@@ -224,19 +291,32 @@ class TransMatOperator(bpy.types.Operator):
                                     "Tangent"#21
                                     ]
                                     
-                                if link.to_node.bl_idname == "ShaderNodeMixRGB":
+                                if link.to_node.bl_idname == "ShaderNodeMixRGB" and link.to_node.blend_type == "MIX":
                                     inputsockets = [
                                     "A",
-                                    "B"
+                                    "B",
+                                    "Alpha",
                                     ]
+                                
+                                if link.to_node.bl_idname == "ShaderNodeMixRGB" and not link.to_node.blend_type == "MIX":
+                                    inputsockets = [
+                                    "Blend",
+                                    "Base"
+                                    ]    
                                     
                                 if link.to_node.bl_idname == "ShaderNodeTexImage":
                                     inputsockets = [
                                     "UVs",
-                                    "B"
+                                    "Tex"
                                     ]
                                     
                                 if link.to_node.bl_idname == "ShaderNodeInvert":
+                                    inputsockets = [
+                                    "",
+                                    ""
+                                    ]
+                                
+                                if link.to_node.bl_idname == "NodeReroute":
                                     inputsockets = [
                                     "",
                                     ""
@@ -255,39 +335,15 @@ class TransMatOperator(bpy.types.Operator):
                                     ]
                                     
                                 if link.to_node.bl_idname == "ShaderNodeOutputMaterial":
-                                    print("")
+                                    print("# Output Node")
                                     #print(f"{node.name}_connection = connect_property({link.from_node.name},'','Material Attributes')")
                                 
                                 if not link.to_node.bl_idname == "ShaderNodeOutputMaterial":    
                                     socketindex = link.to_socket.path_from_id()
                                     socketindex_formatted = re.search(r"\[([A-Za-z0-9_]+)\]", socketindex)    
                                     print(f"{node.name}_connection = create_connection({link.from_node.name},'',{link.to_node.name},'{inputsockets[int(socketindex_formatted.group(1))]}')")
-                   
-################################################################################
-# Inputting the values & Images into Nodes
-################################################################################
-                                
-                print("")
-                print("### Settings")        
-                for node in uenodes:
-                        
-                    if node.bl_idname == "ShaderNodeMixRGB":
-                        if not node.inputs[1].is_linked:
-                            print(f"{node.name}.const_a = ({node.inputs[1].default_value[0]},{node.inputs[1].default_value[1]},{node.inputs[1].default_value[2]})")
-                        if not node.inputs[2].is_linked:    
-                            print(f"{node.name}.const_b = ({node.inputs[2].default_value[0]},{node.inputs[2].default_value[1]},{node.inputs[2].default_value[2]})")
-                        if not node.inputs[0].is_linked:
-                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
-                    
-#                    if node.bl_idname == "ShaderNodeMixShader":
-#                        if not node.inputs[0].is_linked:
-#                            print(f"{node.name}.const_alpha = {node.inputs[0].default_value}")
 
-                    if node.bl_idname == "ShaderNodeTexImage":
-                        print(f"{node.name}.texture = unreal.load_asset('{gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}')")
-                                                                                   
 ################################################################################
-
                                                 
         return {'FINISHED'}
 
