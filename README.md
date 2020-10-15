@@ -5,7 +5,9 @@ Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 TransMat is an Add-on for Blender's Node Editor.
 
-It will create a python file with a list of instructions to instantly, automatically recreate your Blender material in Unreal.
+It creates a python file that will instantly, automatically recreate your Blender material in Unreal.
+
+Check out the example at the bottom of the page to see what it looks like!
 
 # How to Use
 
