@@ -217,7 +217,7 @@ class TransMatOperator(bpy.types.Operator):
                         print(f"{node.name}.set_editor_property('material_function',mat_func_separate)")
 
                     if node.bl_idname == "ShaderNodeTexImage":
-                        print(f"{node.name}.texture = unreal.load_asset('/Game/{context.scene.transmatpaths.gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}')")
+                        print(f"{node.name}.texture = unreal.load_asset('/Game/{context.scene.transmatpaths.gamecontentdirectory}/{str(node.image.filepath).replace('/','').replace('.','_')}')")
 
 
 ################################################################################
