@@ -17,9 +17,11 @@ This will add a properties panel to the Node Editor.
 
 Once you have created your material, choose a directory to output the python file to.
 
-Then, if you wish, you can specify a subfolder for the material and textures to be placed in.
+Then, if you wish, you can specify subfolders for the material and textures to be placed in.
 
-If you do not specify a folder, they will go to your game's Content folder by default.
+If you do not specify any folders, they will go to your game's Content folder by default.
+
+If you do add a subfolder, the script will either find it, if it exists, or create it, if it doesn't.
 
 Now, click the 'Transmat!' button.
 
