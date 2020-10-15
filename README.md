@@ -61,9 +61,9 @@ Reroute
 
 # Limitations
 
-If you use a node that is not on the supported list, your material will likely not transfer properly, if it transfers at all.
+If you use a node that is not on the supported list, your material will not transfer properly, if it transfers at all.
 
-Some very common Blender nodes are not yet supported (Color Ramp!), and it will take time to figure out the proper Unreal equivalent for all of Blender's Nodes.
+Some very common Blender nodes are not yet supported (Color Ramp! ShadertoRGB!), and it will take time to figure out the proper Unreal equivalent for all of Blender's Nodes.
 
 It redirects stdout to create the python file, so if you are printing to the console, it will interfere with the script.
 
@@ -71,9 +71,9 @@ Currently, only one output socket per node is supported, so SeparateRGB etc are 
 
 And, it would be wise to use Value or RGB nodes in place of entering values directly on the Principled BSDF, as there is currently an issue whereby:
 
-If a node has a connection, as well as a value entered into another socket, it will only allow one type of value entry.
+If a node has a connection, as well as a value entered into another socket, it causes problems.
 
-If it has a connection, it wipes all input values, if it has an input value, it breaks all the connections.
+If it has a connection, it wipes all input values, and if it has an input value, it breaks all the connections.
 
 Possibly a fixable issue, possibly a limitation of the interface.
 
