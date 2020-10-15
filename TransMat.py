@@ -6,11 +6,28 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 1, 1),
+    'version': (0, 1, 2),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
 }
+
+# Directory Code
+
+class TransmatPaths(bpy.types.PropertyGroup):
+    
+    exportdirectory : bpy.props.StringProperty(
+        name = "Export Folder(.py):",
+        description = "Path where the .py will be saved",
+        default = "D:/Blender/Scripts/TransmatOutputs/",
+        subtype = 'DIR_PATH'
+    )
+    
+    gamecontentdirectory : bpy.props.StringProperty(
+        name= "Material Folder",
+        description="Subfolder to save Materials and Textures to",
+        default = ""
+    )
 
 # Operator Code
 
@@ -28,8 +45,6 @@ class TransMatOperator(bpy.types.Operator):
         
         material = bpy.context.material
         nodes = material.node_tree.nodes
-        gamecontentdirectory = "/Game/"
-        exportdirectory = "D:\Blender\Scripts\TransmatOutputs\_"
         
         node_translate = {
         "ShaderNodeFresnel":"unreal.MaterialExpressionFresnel",
@@ -85,14 +100,14 @@ class TransMatOperator(bpy.types.Operator):
 ################################################################################
         
         # Exporting the material as a .py file to be run in Unreal
-        with open(f'{exportdirectory}{material.name}_TM.py', 'w') as textoutput:
+        with open(f'{context.scene.transmatpaths.exportdirectory}{material.name}_TM.py', 'w') as textoutput:
             # The file will contain all the print statements until execute
             # returns 'FINISHED'
             with redirect_stdout(textoutput):
                         
                 print("import unreal")
                 print("")
-                print(f"{material.name}=unreal.AssetToolsHelpers.get_asset_tools().create_asset('{material.name}','{gamecontentdirectory}', unreal.Material, unreal.MaterialFactoryNew())")
+                print(f"{material.name}=unreal.AssetToolsHelpers.get_asset_tools().create_asset('{material.name}','/Game/{context.scene.transmatpaths.gamecontentdirectory}/', unreal.Material, unreal.MaterialFactoryNew())")
                 print(f"{material.name}.set_editor_property('use_material_attributes',True)")
                 print("")
                 print("create_expression = unreal.MaterialEditingLibrary.create_material_expression")
@@ -101,7 +116,7 @@ class TransMatOperator(bpy.types.Operator):
                 print(f"tasks = []")
                 #print(f"results = []")
                 
-################################################################################
+##########################################################################`######
 # Importing the textures
 ################################################################################
                 
@@ -114,7 +129,7 @@ class TransMatOperator(bpy.types.Operator):
                         print("")
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import = unreal.AssetImportTask()")
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('automated',True)")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('destination_path','{gamecontentdirectory}')")
+                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('destination_path','/Game/{context.scene.transmatpaths.gamecontentdirectory}/')")
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('destination_name','{str(node.image.filepath).replace('/','').replace('.','_')}')")
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('factory',unreal.TextureFactory())")
                         print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('filename',{str(node.image.filepath).replace('/','').replace('.','_')})")                
@@ -202,7 +217,7 @@ class TransMatOperator(bpy.types.Operator):
                         print(f"{node.name}.set_editor_property('material_function',mat_func_separate)")
 
                     if node.bl_idname == "ShaderNodeTexImage":
-                        print(f"{node.name}.texture = unreal.load_asset('{gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}')")
+                        print(f"{node.name}.texture = unreal.load_asset('/Game/{context.scene.transmatpaths.gamecontentdirectory}{str(node.image.filepath).replace('/','').replace('.','_')}')")
 
 
 ################################################################################
@@ -353,16 +368,27 @@ class TransMatPanel(bpy.types.Panel):
 
         row = layout.row()
         row.operator("blui.transmat_operator")
+        
+        row = layout.row()
+        row.prop(context.scene.transmatpaths, 'exportdirectory')
+        
+        row = layout.row()
+        row.prop(context.scene.transmatpaths, 'gamecontentdirectory')
 
 # Register
 
 def register():
     bpy.utils.register_class(TransMatPanel)
     bpy.utils.register_class(TransMatOperator)
+    bpy.utils.register_class(TransmatPaths)
+    bpy.types.Scene.transmatpaths = bpy.props.PointerProperty(type=TransmatPaths)
+
 
 def unregister():
     bpy.utils.unregister_class(TransMatPanel)
     bpy.utils.unregister_class(TransMatOperator)
+    bpy.utils.unregister_class(TransmatPaths)
+    del bpy.types.Scene.transmatpaths
 
 if __name__ == "__main__":
     register()
