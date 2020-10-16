@@ -59,21 +59,31 @@ RGB
 
 Reroute
 
-Wave Texture - via Bake Noise Nodes button
+Brick Texture - via Bake Noise Nodes button
+
+Checker Texture - via Bake Noise Nodes button
+
+Environment Texture - via Bake Noise Nodes button
+
+Gradient Texture - via Bake Noise Nodes button
+
+IES Texture - via Bake Noise Nodes button
 
 Musgrave Texture - via Bake Noise Nodes button
 
 Magic Texture - via Bake Noise Nodes button
 
-Gradient Texture - via Bake Noise Nodes button
+Noise Texture - via Bake Noise Nodes button
 
-Checker Texture - via Bake Noise Nodes button
+Point Density Texture - via Bake Noise Nodes button
 
-Brick Texture - via Bake Noise Nodes button
+Sky Texture - via Bake Noise Nodes button
 
 Voronoi Texture - via Bake Noise Nodes button
 
-Noise Texture - via Bake Noise Nodes button
+Wave Texture - via Bake Noise Nodes button
+
+White Noise Texture - via Bake Noise Nodes button
 
 Math - Add
 
