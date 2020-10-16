@@ -37,6 +37,12 @@ class TransmatPaths(bpy.types.PropertyGroup):
         description="Subfolder to save Textures to",
         default = ""
     )
+    
+    noiseresolution: bpy.props.IntProperty(
+        name="Resolution",
+        description="Resolution of the baked noise textures",
+        default=1024
+    )
 
 ################################################################################
 # Noise Baking
@@ -73,7 +79,7 @@ class BakeNoises(bpy.types.Operator):
                 
         for noisenode in noisenodes:
             
-            noisebake = bpy.data.images.new(name=str(noisenode.name).replace('.','_'), width=1024, height=1024)
+            noisebake = bpy.data.images.new(name=str(noisenode.name).replace('.','_').replace(' ',''), width=context.scene.transmatpaths.noiseresolution, height=context.scene.transmatpaths.noiseresolution)
             
             bpy.ops.node.add_node(type="ShaderNodeUVMap")
             uvmap =  bpy.context.active_node
@@ -95,6 +101,10 @@ class BakeNoises(bpy.types.Operator):
             bpy.context.active_node.image = noisebake
             
             bpy.ops.object.bake(type='EMIT')
+            noisebake.pack()
+            noisebake.filepath = context.scene.transmatpaths.exportdirectory + str(noisebake.name).replace(' ','').replace('.','') + ".png"
+            noisebake.file_format = "PNG"
+            noisebake.save()
             nodes.remove(uvmap)
             nodes.remove(emission)
                
@@ -189,7 +199,6 @@ class TransMatOperator(bpy.types.Operator):
                 print("create_connection = unreal.MaterialEditingLibrary.connect_material_expressions")
                 print("connect_property = unreal.MaterialEditingLibrary.connect_material_property")
                 print(f"tasks = []")
-                #print(f"results = []")
                 
 ##########################################################################`######
 # Importing the textures
@@ -199,18 +208,19 @@ class TransMatOperator(bpy.types.Operator):
                 print("### Textures")
                 for node in nodes:
                     if node.bl_idname == "ShaderNodeTexImage":
+                        filename = str(node.image.filepath).replace('/','').replace('.','_').replace(' ','').replace(':','').replace('\\','')
                         print("")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')} = '{str(node.image.filepath_from_user())}'")
+                        print(f"{filename} = '{str(node.image.filepath_from_user())}'")
                         print("")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import = unreal.AssetImportTask()")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('automated',True)")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('destination_path','/Game/{context.scene.transmatpaths.texturedirectory}/')")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('destination_name','{str(node.image.filepath).replace('/','').replace('.','_')}')")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('factory',unreal.TextureFactory())")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('filename',{str(node.image.filepath).replace('/','').replace('.','_')})")                
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('replace_existing',True)")
-                        print(f"{str(node.image.filepath).replace('/','').replace('.','_')}_import.set_editor_property('save',True)")
-                        print(f"tasks.append({str(node.image.filepath).replace('/','').replace('.','_')}_import)")
+                        print(f"{filename}_import = unreal.AssetImportTask()")
+                        print(f"{filename}_import.set_editor_property('automated',True)")
+                        print(f"{filename}_import.set_editor_property('destination_path','/Game/{context.scene.transmatpaths.texturedirectory}/')")
+                        print(f"{filename}_import.set_editor_property('destination_name','{str(node.image.filepath).replace('/','').replace('.','_')}')")
+                        print(f"{filename}_import.set_editor_property('factory',unreal.TextureFactory())")
+                        print(f"{filename}_import.set_editor_property('filename',{filename})")                
+                        print(f"{filename}_import.set_editor_property('replace_existing',True)")
+                        print(f"{filename}_import.set_editor_property('save',True)")
+                        print(f"tasks.append({filename}_import)")
                 print("")
                 print(f"unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(tasks)")
                 
@@ -463,6 +473,9 @@ class TransMatPanel(bpy.types.Panel):
         
         column = layout.column()
         column.label(text="Bake procedural noise nodes to textures", icon='NODE_SEL')
+        
+        row = layout.row()
+        row.prop(context.scene.transmatpaths, 'noiseresolution')
         
         row = layout.row()
         row.operator("blui.bakenoises_operator", icon='NODE')
