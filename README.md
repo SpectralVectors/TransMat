@@ -59,13 +59,57 @@ RGB
 
 Reroute
 
-Math - Add 
-Math - Subtract 
-Math - Multiply, Divide, Sine, Arcsine, Cosine, Arccosine, Power, Minimum, Maximum, Round, Absolute
+Math - Add
 
-Vector Math - Normalize, Dot Product, Cross Product
+Math - Subtract
 
-MixRGB - Mix, Color Burn, Color Dodge, Darken, Difference, Lighten, Linear Light, Overlay, Screen, Soft Light
+Math - Multiply
+
+Math - Divide
+
+Math - Sine
+
+Math - Arcsine
+
+Math - Cosine
+
+Math - Arccosine
+
+Math - Power
+
+Math - Minimum
+
+Math - Maximum
+
+Math - Round
+
+Math - Absolute
+
+Vector Math - Normalize 
+
+Vector Math - Dot Product 
+
+Vector Math - Cross Product
+
+MixRGB - Mix
+
+MixRGB - Color Burn
+
+MixRGB - Color Dodge
+
+MixRGB - Darken
+
+MixRGB - Difference
+
+MixRGB - Lighten
+
+MixRGB - Linear Light
+
+MixRGB - Overlay
+
+MixRGB - Screen
+
+MixRGB - Soft Light
 
 # Limitations
 
