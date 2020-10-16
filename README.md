@@ -1,7 +1,7 @@
 # TransMat
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
-# Description
+## Description
 
 TransMat is an Add-on for Blender's Node Editor.
 
@@ -9,7 +9,7 @@ It creates a python file that will instantly, automatically recreate your Blende
 
 Check out the example at the bottom of the page to see what it looks like!
 
-# How to Use
+## How to Use
 
 Download and unzip the file, then, in Blender, click Edit > Preferences > Addons > Install and choose Transmat.py
 
@@ -35,9 +35,9 @@ Navigate to the python file that was just created, and click OK - eg "_yourmater
 
 Transmat will find and import all the image textures from your Blender material, and plug them into the right nodes!
 
-# Currently supported Blender Nodes
+## Currently supported Blender Nodes
 
-__Blender Node  =>__  Unreal Material Expression Node
+###__Blender Node  =>__  Unreal Material Expression Node
 
 __Principled BSDF =>__ MakeMaterialAttributes
 
@@ -139,7 +139,7 @@ __Wave Texture - via Bake Noise Nodes button =>__ TextureSample
 
 __White Noise Texture - via Bake Noise Nodes button =>__ TextureSample
 
-# Currently unsupported Blender Nodes
+## Currently unsupported Blender Nodes
 
 Anything NOT in the above list is unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials.
 
@@ -171,7 +171,7 @@ If a node is in the unsupported list, it doesn't mean it won't be supported, onl
 
 I'm planning on first getting all the nodes that have direct equivalents sorted out, then looking at nodes that require custom coded solutions.
 
-# Limitations
+## Limitations
 
 If you use a node that is not on the supported list, your material will likely not transfer properly.
 
@@ -189,7 +189,7 @@ If it has a connection, it wipes all input values, and if it has an input value,
 
 Possibly a fixable issue, possibly a limitation of the interface.
 
-# Example output (new_material_TM.py):
+## Example output (new_material_TM.py):
 ~~~
 import unreal
 
