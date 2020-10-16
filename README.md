@@ -171,7 +171,7 @@ I'm planning on first getting all the nodes that have direct equivalents sorted 
 
 # Limitations
 
-If you use a node that is not on the supported list, your material will not transfer properly, if it transfers at all.
+If you use a node that is not on the supported list, your material will likely not transfer properly.
 
 Some very common Blender nodes are not yet supported and it will take time to figure out the proper Unreal equivalent for all of Blender's Nodes.
 
