@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 2, 2),
+    'version': (0, 2, 3),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -29,13 +29,13 @@ class TransmatPaths(bpy.types.PropertyGroup):
     materialdirectory : bpy.props.StringProperty(
         name= "Material",
         description="Subfolder to save Materials to",
-        default = "Materials/"
+        default = "Materials"
     )
     
     texturedirectory : bpy.props.StringProperty(
         name= "Texture",
         description="Subfolder to save Textures to",
-        default = "Textures/"
+        default = "Textures"
     )
     
     noiseresolution: bpy.props.IntProperty(
@@ -129,7 +129,27 @@ class TransMatOperator(bpy.types.Operator):
     def execute(self, context):
         
         material = bpy.context.material
-        nodes = material.node_tree.nodes
+        #nodes = material.node_tree.nodes
+        supported_nodes = [
+        "ShaderNodeFresnel",
+        "ShaderNodeUVMap",
+        "ShaderNodeSeparateRGB",
+        "NodeReroute",
+        "ShaderNodeOutputMaterial",
+        "ShaderNodeBsdfPrincipled",
+        "ShaderNodeMixShader",
+        "ShaderNodeAddShader",
+        "ShaderNodeInvert",
+        "ShaderNodeTexImage",
+        "ShaderNodeTexCoord",
+        "ShaderNodeValue",
+        "ShaderNodeRGB",
+        "ShaderNodeMath",
+        "ShaderNodeVectorMath",
+        "ShaderNodeMixRGB"
+        ]
+        # Thanks to Jim Kroovy for this - prevents crashes with unsupported nodes
+        nodes = [n for n in material.node_tree.nodes if n.bl_idname in supported_nodes]
         
         node_translate = {
         "ShaderNodeFresnel":"unreal.MaterialExpressionFresnel",
@@ -300,10 +320,11 @@ class TransMatOperator(bpy.types.Operator):
                     if node.bl_idname == "ShaderNodeSeparateRGB":
                         print(f"mat_func_separate = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components')")
                         print(f"{node.name}.set_editor_property('material_function',mat_func_separate)")
-
+                    
+                    # Troublesome slash is here
                     if node.bl_idname == "ShaderNodeTexImage":
                         filename = str(node.image.filepath).replace('/','').replace('.','_').replace(' ','').replace(':','').replace('\\','')
-                        print(f"{node.name}.texture = unreal.load_asset('/Game/{context.scene.transmatpaths.texturedirectory}/{filename}')")
+                        print(f"{node.name}.texture = unreal.load_asset('/Game{context.scene.transmatpaths.texturedirectory}/{filename}')")
 
 
 ################################################################################
