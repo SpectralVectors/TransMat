@@ -141,7 +141,7 @@ __White Noise Texture - via Bake Noise Nodes button =>__ TextureSample
 
 ## Currently unsupported Blender Nodes
 
-Anything NOT in the above list is unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials.
+Anything NOT in the above list can be considered unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials, those are explicitly stated below.
 
 Color Ramp
 
