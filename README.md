@@ -37,105 +37,107 @@ Transmat will find and import all the image textures from your Blender material,
 
 # Currently supported Blender Nodes
 
-Principled BSDF
+__Blender Node  =>  Unreal Material Expression Node__
 
-Image Texture
+Principled BSDF __=>__ MakeMaterialAttributes
 
-Texture Coordinate
+Image Texture __=>__ TextureSample
 
-UV Map
+Texture Coordinate __=>__ TextureCoordinate
 
-Mix Shader
+UV Map __=>__ TextureCoordinate
 
-Add Shader
+Mix Shader __=>__ BlendMaterialAttributes
 
-Invert
+Add Shader __=>__ Add
 
-Fresnel
+Invert __=>__ OneMinus
 
-Value
+Fresnel __=>__ Fresnel
 
-RGB
+Value __=>__ Constant
 
-Reroute
+RGB __=>__ Constant3Vector
 
-Math - Add
+Reroute __=>__ Reroute
 
-Math - Subtract
+Math - Add __=>__ Add
 
-Math - Multiply
+Math - Subtract __=>__ Subtract
 
-Math - Divide
+Math - Multiply __=>__ Multiply
 
-Math - Sine
+Math - Divide __=>__ Divide
 
-Math - Arcsine
+Math - Sine __=>__ Sine
 
-Math - Cosine
+Math - Arcsine __=>__ Arcsine
 
-Math - Arccosine
+Math - Cosine __=>__ Cosine
 
-Math - Power
+Math - Arccosine __=>__ Arccosine 
 
-Math - Minimum
+Math - Power __=>__ Power
 
-Math - Maximum
+Math - Minimum __=>__ Min
 
-Math - Round
+Math - Maximum __=>__ Max
 
-Math - Absolute
+Math - Round __=>__ Round
 
-Vector Math - Normalize 
+Math - Absolute __=>__ Abs
 
-Vector Math - Dot Product 
+Vector Math - Normalize  __=>__ Normalize
 
-Vector Math - Cross Product
+Vector Math - Dot Product  __=>__ DotProduct
 
-MixRGB - Mix
+Vector Math - Cross Product __=>__ CrossProduct
 
-MixRGB - Color Burn
+MixRGB - Mix __=>__ LinearInterpolate (our friend Lerp!)
 
-MixRGB - Color Dodge
+MixRGB - Color Burn __=>__ FunctionCall - Blend_ColorBurn
 
-MixRGB - Darken
+MixRGB - Color Dodge __=>__ FunctionCall - Blend_ColorDodge
 
-MixRGB - Difference
+MixRGB - Darken __=>__ FunctionCall - Blend_Darken
 
-MixRGB - Lighten
+MixRGB - Difference __=>__ FunctionCall - Blend_Difference
 
-MixRGB - Linear Light
+MixRGB - Lighten __=>__ FunctionCall - Blend_Lighten
 
-MixRGB - Overlay
+MixRGB - Linear Light __=>__ FunctionCall - Blend_LinearLight
 
-MixRGB - Screen
+MixRGB - Overlay __=>__ FunctionCall - Blend_Overlay
 
-MixRGB - Soft Light
+MixRGB - Screen __=>__ FunctionCall - Blend_Screen
 
-Brick Texture - via Bake Noise Nodes button
+MixRGB - Soft Light __=>__ FunctionCall - Blend_SoftLight
 
-Checker Texture - via Bake Noise Nodes button
+Brick Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Environment Texture - via Bake Noise Nodes button
+Checker Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Gradient Texture - via Bake Noise Nodes button
+Environment Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-IES Texture - via Bake Noise Nodes button
+Gradient Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Musgrave Texture - via Bake Noise Nodes button
+IES Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Magic Texture - via Bake Noise Nodes button
+Musgrave Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Noise Texture - via Bake Noise Nodes button
+Magic Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Point Density Texture - via Bake Noise Nodes button
+Noise Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Sky Texture - via Bake Noise Nodes button
+Point Density Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Voronoi Texture - via Bake Noise Nodes button
+Sky Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-Wave Texture - via Bake Noise Nodes button
+Voronoi Texture - via Bake Noise Nodes button __=>__ TextureSample
 
-White Noise Texture - via Bake Noise Nodes button
+Wave Texture - via Bake Noise Nodes button __=>__ TextureSample
+
+White Noise Texture - via Bake Noise Nodes button __=>__ TextureSample
 
 # Currently unsupported Blender Nodes
 
