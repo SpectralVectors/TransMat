@@ -1,18 +1,21 @@
 import bpy
 import re
+import time
 from contextlib import redirect_stdout
 
 bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 1, 3),
+    'version': (0, 2, 0),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
 }
 
+################################################################################
 # Directory Code
+################################################################################
 
 class TransmatPaths(bpy.types.PropertyGroup):
     
@@ -35,7 +38,73 @@ class TransmatPaths(bpy.types.PropertyGroup):
         default = ""
     )
 
+################################################################################
+# Noise Baking
+################################################################################
+
+class BakeNoises(bpy.types.Operator):
+    """Bakes procedural noise nodes to textures for export"""
+    bl_idname = "blui.bakenoises_operator"
+    bl_label = "Bake Noise Nodes"
+    
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return space.type == 'NODE_EDITOR'
+
+    def execute(self, context):
+        
+        previousrenderengine = bpy.context.scene.render.engine
+        material = bpy.context.material
+        nodes = material.node_tree.nodes
+        links = material.node_tree.links
+        noisenodes = []
+        
+        bpy.context.scene.render.engine = 'CYCLES'
+        bpy.context.scene.cycles.device = 'GPU'
+        bpy.context.scene.cycles.samples = 128
+        
+        for node in nodes:
+            if node.bl_idname == "ShaderNodeTexNoise" or node.bl_idname == "ShaderNodeTexVoronoi" or node.bl_idname == "ShaderNodeTexBrick" or node.bl_idname == "ShaderNodeTexChecker" or node.bl_idname == "ShaderNodeTexGradient" or node.bl_idname == "ShaderNodeTexMagic" or node.bl_idname == "ShaderNodeTexMusgrave" or node.bl_idname == "ShaderNodeTexWave":
+                noisenode = node
+                noisenodes.append(noisenode)
+            if node.bl_idname == "ShaderNodeOutputMaterial":
+                output = node
+                
+        for noisenode in noisenodes:
+            
+            noisebake = bpy.data.images.new(name=str(noisenode.name).replace('.','_'), width=1024, height=1024)
+            
+            bpy.ops.node.add_node(type="ShaderNodeUVMap")
+            uvmap =  bpy.context.active_node
+            bpy.context.active_node.location[0] = noisenode.location[0]-200
+            bpy.context.active_node.location[1] = noisenode.location[1]
+            links.new(bpy.context.active_node.outputs[0], noisenode.inputs[0])
+            
+            bpy.ops.node.add_node(type="ShaderNodeEmission")
+            emission =  bpy.context.active_node
+            bpy.context.active_node.location[0] = noisenode.location[0]+200
+            bpy.context.active_node.location[1] = noisenode.location[1]
+            links.new(noisenode.outputs[0], bpy.context.active_node.inputs[0])
+            links.new(bpy.context.active_node.outputs[0], output.inputs[0])
+            
+            bpy.ops.node.add_node(type="ShaderNodeTexImage")
+            image = bpy.context.active_node
+            bpy.context.active_node.location[0] = noisenode.location[0]-300
+            bpy.context.active_node.location[1] = noisenode.location[1]
+            bpy.context.active_node.image = noisebake
+            
+            bpy.ops.object.bake(type='EMIT')
+            nodes.remove(uvmap)
+            nodes.remove(emission)
+               
+        bpy.context.scene.render.engine = previousrenderengine
+            
+        return {'FINISHED'}      
+                
+################################################################################
 # Operator Code
+################################################################################
 
 class TransMatOperator(bpy.types.Operator):
     """Translates and Transfers Materials from Blender to Unreal"""
@@ -392,6 +461,18 @@ class TransMatPanel(bpy.types.Panel):
         column = layout.column()
         column.label(text="")
         
+        column = layout.column()
+        column.label(text="Bake procedural noise nodes to textures", icon='NODE_SEL')
+        
+        row = layout.row()
+        row.operator("blui.bakenoises_operator", icon='NODE')
+        
+        column = layout.column()
+        column.label(text="")
+        
+        column = layout.column()
+        column.label(text="Transfer Material to Unreal Python File", icon='MATERIAL')
+        
         row = layout.row()
         row.operator("blui.transmat_operator", icon='EXPORT')
 
@@ -402,13 +483,14 @@ def register():
     bpy.utils.register_class(TransMatOperator)
     bpy.utils.register_class(TransmatPaths)
     bpy.types.Scene.transmatpaths = bpy.props.PointerProperty(type=TransmatPaths)
-
+    bpy.utils.register_class(BakeNoises)
 
 def unregister():
     bpy.utils.unregister_class(TransMatPanel)
     bpy.utils.unregister_class(TransMatOperator)
     bpy.utils.unregister_class(TransmatPaths)
     del bpy.types.Scene.transmatpaths
-
+    bpy.utils.unregister_class(BakeNoises)
+    
 if __name__ == "__main__":
     register()
