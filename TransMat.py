@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 2, 4),
+    'version': (0, 2, 5),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -71,7 +71,7 @@ class BakeNoises(bpy.types.Operator):
         bpy.context.scene.cycles.samples = 128
         
         for node in nodes:
-            if node.bl_idname == "ShaderNodeTexNoise" or node.bl_idname == "ShaderNodeTexVoronoi" or node.bl_idname == "ShaderNodeTexBrick" or node.bl_idname == "ShaderNodeTexChecker" or node.bl_idname == "ShaderNodeTexGradient" or node.bl_idname == "ShaderNodeTexMagic" or node.bl_idname == "ShaderNodeTexMusgrave" or node.bl_idname == "ShaderNodeTexWave":
+            if node.bl_idname.startswith("ShaderNodeTex") and not node.bl_idname == "ShaderNodeTexImage":
                 noisenode = node
                 noisenodes.append(noisenode)
             if node.bl_idname == "ShaderNodeOutputMaterial":
