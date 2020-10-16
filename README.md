@@ -61,6 +61,8 @@ Transmat will find and import all the image textures from your Blender material,
 
 - __Reroute =>__ Reroute
 
+#### Math Node Operations:
+
 - __Math - Add =>__ Add
 
 - __Math - Subtract =>__ Subtract
