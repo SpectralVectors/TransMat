@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 2, 3),
+    'version': (0, 2, 4),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -78,7 +78,9 @@ class BakeNoises(bpy.types.Operator):
                 output = node
                 
         for noisenode in noisenodes:
-            
+            for link in noisenode.outputs[0].links:
+                nnlinksocket = link.to_socket
+                        
             noisebake = bpy.data.images.new(name=str(noisenode.name).replace('.','_').replace(' ',''), width=context.scene.transmatpaths.noiseresolution, height=context.scene.transmatpaths.noiseresolution)
             
             bpy.ops.node.add_node(type="ShaderNodeUVMap")
@@ -107,6 +109,7 @@ class BakeNoises(bpy.types.Operator):
             noisebake.save()
             nodes.remove(uvmap)
             nodes.remove(emission)
+            links.new(image.outputs[0],nnlinksocket) 
                
         bpy.context.scene.render.engine = previousrenderengine
             
