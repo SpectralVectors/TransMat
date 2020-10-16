@@ -23,6 +23,10 @@ If you do not specify any folders, they will go to your game's Content folder by
 
 If you do add a subfolder, the script will either find it, if it exists, or create it, if it doesn't.
 
+Next, if you're using procedural noise nodes, you can bake them to textures, and choose your resolution.
+
+The noise nodes themselves aren't supported, so delete them after you've printed the textures.
+
 Now, click the 'Transmat!' button.
 
 Then, in Unreal (with the Python plug-in and Editor Scripting enabled) click File > Execute Python Script.
