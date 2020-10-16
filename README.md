@@ -25,6 +25,8 @@ If you do add a subfolder, the script will either find it, if it exists, or crea
 
 Next, if you're using procedural noise nodes, you can bake them to textures, and choose your resolution.
 
+Transmat now autodetects the connections of the noise nodes, and replaces them with your newly baked textures!
+
 Now, click the 'Transmat!' button.
 
 Then, in Unreal (with the Python plug-in and Editor Scripting enabled) click File > Execute Python Script.
@@ -56,6 +58,22 @@ Value
 RGB
 
 Reroute
+
+Wave Texture - via Bake Noise Nodes button
+
+Musgrave Texture - via Bake Noise Nodes button
+
+Magic Texture - via Bake Noise Nodes button
+
+Gradient Texture - via Bake Noise Nodes button
+
+Checker Texture - via Bake Noise Nodes button
+
+Brick Texture - via Bake Noise Nodes button
+
+Voronoi Texture - via Bake Noise Nodes button
+
+Noise Texture - via Bake Noise Nodes button
 
 Math - Add
 
@@ -109,11 +127,43 @@ MixRGB - Screen
 
 MixRGB - Soft Light
 
+# Currently unsupported Blender Nodes
+
+Anything NOT in the above list is unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials.
+
+Color Ramp
+
+Mapping
+
+Normal
+
+Bump
+
+Displacement
+
+RGB Curves
+
+Brightness/Contrast
+
+Separate RGB, XYZ, HSV
+
+Combine RGB, XYZ, HSV
+
+Group
+
+Frame
+
+Script
+
+If a node is in the unsupported list, it doesn't mean it won't be supported, only that I haven't yet found a way to port it over.
+
+I'm planning on first getting all the nodes that have direct equivalents sorted out, then looking at nodes that require custom coded solutions.
+
 # Limitations
 
 If you use a node that is not on the supported list, your material will not transfer properly, if it transfers at all.
 
-Some very common Blender nodes are not yet supported (Color Ramp! ShadertoRGB!), and it will take time to figure out the proper Unreal equivalent for all of Blender's Nodes.
+Some very common Blender nodes are not yet supported and it will take time to figure out the proper Unreal equivalent for all of Blender's Nodes.
 
 It redirects stdout to create the python file, so if you are printing to the console, it will interfere with the script.
 
