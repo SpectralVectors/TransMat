@@ -37,107 +37,107 @@ Transmat will find and import all the image textures from your Blender material,
 
 # Currently supported Blender Nodes
 
-__Blender Node  =>  Unreal Material Expression Node__
+__Blender Node  =>__  Unreal Material Expression Node
 
-Principled BSDF __=>__ MakeMaterialAttributes
+__Principled BSDF =>__ MakeMaterialAttributes
 
-Image Texture __=>__ TextureSample
+__Image Texture =>__ TextureSample
 
-Texture Coordinate __=>__ TextureCoordinate
+__Texture Coordinate =>__ TextureCoordinate
 
-UV Map __=>__ TextureCoordinate
+__UV Map =>__ TextureCoordinate
 
-Mix Shader __=>__ BlendMaterialAttributes
+__Mix Shader =>__ BlendMaterialAttributes
 
-Add Shader __=>__ Add
+__Add Shader =>__ Add
 
-Invert __=>__ OneMinus
+__Invert =>__ OneMinus
 
-Fresnel __=>__ Fresnel
+__Fresnel =>__ Fresnel
 
-Value __=>__ Constant
+__Value =>__ Constant
 
-RGB __=>__ Constant3Vector
+__RGB =>__ Constant3Vector
 
-Reroute __=>__ Reroute
+__Reroute =>__ Reroute
 
-Math - Add __=>__ Add
+__Math - Add =>__ Add
 
-Math - Subtract __=>__ Subtract
+__Math - Subtract =>__ Subtract
 
-Math - Multiply __=>__ Multiply
+__Math - Multiply =>__ Multiply
 
-Math - Divide __=>__ Divide
+__Math - Divide =>__ Divide
 
-Math - Sine __=>__ Sine
+__Math - Sine =>__ Sine
 
-Math - Arcsine __=>__ Arcsine
+__Math - Arcsine =>__ Arcsine
 
-Math - Cosine __=>__ Cosine
+__Math - Cosine =>__ Cosine
 
-Math - Arccosine __=>__ Arccosine 
+__Math - Arccosine =>__ Arccosine 
 
-Math - Power __=>__ Power
+__Math - Power =>__ Power
 
-Math - Minimum __=>__ Min
+__Math - Minimum =>__ Min
 
-Math - Maximum __=>__ Max
+__Math - Maximum =>__ Max
 
-Math - Round __=>__ Round
+__Math - Round =>__ Round
 
-Math - Absolute __=>__ Abs
+__Math - Absolute =>__ Abs
 
-Vector Math - Normalize  __=>__ Normalize
+__Vector Math - Normalize  =>__ Normalize
 
-Vector Math - Dot Product  __=>__ DotProduct
+__Vector Math - Dot Product  =>__ DotProduct
 
-Vector Math - Cross Product __=>__ CrossProduct
+__Vector Math - Cross Product =>__ CrossProduct
 
-MixRGB - Mix __=>__ LinearInterpolate (our friend Lerp!)
+__MixRGB - Mix =>__ LinearInterpolate (our friend Lerp!)
 
-MixRGB - Color Burn __=>__ FunctionCall - Blend_ColorBurn
+__MixRGB - Color Burn =>__ FunctionCall - Blend_ColorBurn
 
-MixRGB - Color Dodge __=>__ FunctionCall - Blend_ColorDodge
+__MixRGB - Color Dodge =>__ FunctionCall - Blend_ColorDodge
 
-MixRGB - Darken __=>__ FunctionCall - Blend_Darken
+__MixRGB - Darken =>__ FunctionCall - Blend_Darken
 
-MixRGB - Difference __=>__ FunctionCall - Blend_Difference
+__MixRGB - Difference =>__ FunctionCall - Blend_Difference
 
-MixRGB - Lighten __=>__ FunctionCall - Blend_Lighten
+__MixRGB - Lighten =>__ FunctionCall - Blend_Lighten
 
-MixRGB - Linear Light __=>__ FunctionCall - Blend_LinearLight
+__MixRGB - Linear Light =>__ FunctionCall - Blend_LinearLight
 
-MixRGB - Overlay __=>__ FunctionCall - Blend_Overlay
+__MixRGB - Overlay =>__ FunctionCall - Blend_Overlay
 
-MixRGB - Screen __=>__ FunctionCall - Blend_Screen
+__MixRGB - Screen =>__ FunctionCall - Blend_Screen
 
-MixRGB - Soft Light __=>__ FunctionCall - Blend_SoftLight
+__MixRGB - Soft Light =>__ FunctionCall - Blend_SoftLight
 
-Brick Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Brick Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Checker Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Checker Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Environment Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Environment Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Gradient Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Gradient Texture - via Bake Noise Nodes button =>__ TextureSample
 
-IES Texture - via Bake Noise Nodes button __=>__ TextureSample
+__IES Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Musgrave Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Musgrave Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Magic Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Magic Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Noise Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Noise Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Point Density Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Point Density Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Sky Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Sky Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Voronoi Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Voronoi Texture - via Bake Noise Nodes button =>__ TextureSample
 
-Wave Texture - via Bake Noise Nodes button __=>__ TextureSample
+__Wave Texture - via Bake Noise Nodes button =>__ TextureSample
 
-White Noise Texture - via Bake Noise Nodes button __=>__ TextureSample
+__White Noise Texture - via Bake Noise Nodes button =>__ TextureSample
 
 # Currently unsupported Blender Nodes
 
