@@ -45,127 +45,127 @@ Transmat will find and import all the image textures from your Blender material,
 
 - __Texture Coordinate =>__ TextureCoordinate
 
-__UV Map =>__ TextureCoordinate
+- __UV Map =>__ TextureCoordinate
 
-__Mix Shader =>__ BlendMaterialAttributes
+- __Mix Shader =>__ BlendMaterialAttributes
 
-__Add Shader =>__ Add
+- __Add Shader =>__ Add
 
-__Invert =>__ OneMinus
+- __Invert =>__ OneMinus
 
-__Fresnel =>__ Fresnel
+- __Fresnel =>__ Fresnel
 
-__Value =>__ Constant
+- __Value =>__ Constant
 
-__RGB =>__ Constant3Vector
+- __RGB =>__ Constant3Vector
 
-__Reroute =>__ Reroute
+- __Reroute =>__ Reroute
 
-__Math - Add =>__ Add
+- __Math - Add =>__ Add
 
-__Math - Subtract =>__ Subtract
+- __Math - Subtract =>__ Subtract
 
-__Math - Multiply =>__ Multiply
+- __Math - Multiply =>__ Multiply
 
-__Math - Divide =>__ Divide
+- __Math - Divide =>__ Divide
 
-__Math - Sine =>__ Sine
+- __Math - Sine =>__ Sine
 
-__Math - Arcsine =>__ Arcsine
+- __Math - Arcsine =>__ Arcsine
 
-__Math - Cosine =>__ Cosine
+- __Math - Cosine =>__ Cosine
 
-__Math - Arccosine =>__ Arccosine 
+- __Math - Arccosine =>__ Arccosine 
 
-__Math - Power =>__ Power
+- __Math - Power =>__ Power
 
-__Math - Minimum =>__ Min
+- __Math - Minimum =>__ Min
 
-__Math - Maximum =>__ Max
+- __Math - Maximum =>__ Max
 
-__Math - Round =>__ Round
+- __Math - Round =>__ Round
 
-__Math - Absolute =>__ Abs
+- __Math - Absolute =>__ Abs
 
-__Vector Math - Normalize  =>__ Normalize
+- __Vector Math - Normalize  =>__ Normalize
 
-__Vector Math - Dot Product  =>__ DotProduct
+- __Vector Math - Dot Product  =>__ DotProduct
 
-__Vector Math - Cross Product =>__ CrossProduct
+- __Vector Math - Cross Product =>__ CrossProduct
 
-__MixRGB - Mix =>__ LinearInterpolate (our friend Lerp!)
+- __MixRGB - Mix =>__ LinearInterpolate (our friend Lerp!)
 
-__MixRGB - Color Burn =>__ FunctionCall - Blend_ColorBurn
+- __MixRGB - Color Burn =>__ FunctionCall - Blend_ColorBurn
 
-__MixRGB - Color Dodge =>__ FunctionCall - Blend_ColorDodge
+- __MixRGB - Color Dodge =>__ FunctionCall - Blend_ColorDodge
 
-__MixRGB - Darken =>__ FunctionCall - Blend_Darken
+- __MixRGB - Darken =>__ FunctionCall - Blend_Darken
 
-__MixRGB - Difference =>__ FunctionCall - Blend_Difference
+- __MixRGB - Difference =>__ FunctionCall - Blend_Difference
 
-__MixRGB - Lighten =>__ FunctionCall - Blend_Lighten
+- __MixRGB - Lighten =>__ FunctionCall - Blend_Lighten
 
-__MixRGB - Linear Light =>__ FunctionCall - Blend_LinearLight
+- __MixRGB - Linear Light =>__ FunctionCall - Blend_LinearLight
 
-__MixRGB - Overlay =>__ FunctionCall - Blend_Overlay
+- __MixRGB - Overlay =>__ FunctionCall - Blend_Overlay
 
-__MixRGB - Screen =>__ FunctionCall - Blend_Screen
+- __MixRGB - Screen =>__ FunctionCall - Blend_Screen
 
-__MixRGB - Soft Light =>__ FunctionCall - Blend_SoftLight
+- __MixRGB - Soft Light =>__ FunctionCall - Blend_SoftLight
 
-__Brick Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Brick Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Checker Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Checker Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Environment Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Environment Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Gradient Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Gradient Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__IES Texture - via Bake Noise Nodes button =>__ TextureSample
+- __IES Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Musgrave Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Musgrave Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Magic Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Magic Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Noise Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Noise Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Point Density Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Point Density Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Sky Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Sky Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Voronoi Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Voronoi Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__Wave Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Wave Texture - via Bake Noise Nodes button =>__ TextureSample
 
-__White Noise Texture - via Bake Noise Nodes button =>__ TextureSample
+- __White Noise Texture - via Bake Noise Nodes button =>__ TextureSample
 
 ## Currently unsupported Blender Nodes
 
 Anything NOT in the above list can be considered unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials, those are explicitly stated below.
 
-Color Ramp
+- Color Ramp
 
-Mapping
+- Mapping
 
-Normal
+- Normal
 
-Bump
+- Bump
 
-Displacement
+- Displacement
 
-RGB Curves
+- RGB Curves
 
-Brightness/Contrast
+- Brightness/Contrast
 
-Separate RGB, XYZ, HSV
+- Separate RGB, XYZ, HSV
 
-Combine RGB, XYZ, HSV
+- Combine RGB, XYZ, HSV
 
-Group
+- Group
 
-Frame
+- Frame
 
-Script
+- Script
 
 If a node is in the unsupported list, it doesn't mean it won't be supported, only that I haven't yet found a way to port it over.
 
