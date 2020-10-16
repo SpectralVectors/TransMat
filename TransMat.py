@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 2, 1),
+    'version': (0, 2, 2),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -302,6 +302,7 @@ class TransMatOperator(bpy.types.Operator):
                         print(f"{node.name}.set_editor_property('material_function',mat_func_separate)")
 
                     if node.bl_idname == "ShaderNodeTexImage":
+                        filename = str(node.image.filepath).replace('/','').replace('.','_').replace(' ','').replace(':','').replace('\\','')
                         print(f"{node.name}.texture = unreal.load_asset('/Game/{context.scene.transmatpaths.texturedirectory}/{filename}')")
 
 
