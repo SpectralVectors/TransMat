@@ -7,14 +7,14 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 2, 7),
+    'version': (0, 2, 8),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
 }
 
 ################################################################################
-# Directory Code
+# Properties & Directory Code
 ################################################################################
 
 class TransmatPaths(bpy.types.PropertyGroup):
@@ -66,6 +66,12 @@ class BakeNoises(bpy.types.Operator):
         links = material.node_tree.links
         noisenodes = []
         
+        # Breaking the Groups, a better solution can be found for reassembling later
+        for node in nodes:
+            if node.bl_idname == "ShaderNodeGroup":
+                material.node_tree.nodes.active = node
+                bpy.ops.node.group_ungroup()
+        
         bpy.context.scene.render.engine = 'CYCLES'
         bpy.context.scene.cycles.device = 'GPU'
         bpy.context.scene.cycles.samples = 128
@@ -81,7 +87,11 @@ class BakeNoises(bpy.types.Operator):
             for link in noisenode.outputs[0].links:
                 nnlinksocket = link.to_socket
                         
-            noisebake = bpy.data.images.new(name=str(noisenode.name).replace('.','_').replace(' ',''), width=context.scene.transmatpaths.noiseresolution, height=context.scene.transmatpaths.noiseresolution)
+            noisebake = bpy.data.images.new(
+            name = str(noisenode.name).replace('.','_').replace(' ',''), 
+            width = context.scene.transmatpaths.noiseresolution, 
+            height = context.scene.transmatpaths.noiseresolution
+            )
             
             bpy.ops.node.add_node(type="ShaderNodeUVMap")
             uvmap =  bpy.context.active_node
@@ -112,7 +122,7 @@ class BakeNoises(bpy.types.Operator):
             links.new(image.outputs[0],nnlinksocket) 
                
         bpy.context.scene.render.engine = previousrenderengine
-            
+           
         return {'FINISHED'}      
                 
 ################################################################################
@@ -131,9 +141,9 @@ class TransMatOperator(bpy.types.Operator):
 
     def execute(self, context):
         
-        material = bpy.context.material
-        
+        # The officially supported Node List (in .bl_idname form)
         supported_nodes = [
+        #"ShaderNodeGroup",
         "ShaderNodeFresnel",
         "ShaderNodeUVMap",
         "ShaderNodeSeparateRGB",
@@ -152,13 +162,14 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeMixRGB"
         ]
         
-        # Thanks to Jim Kroovy for this - prevents crashes with unsupported nodes
-        nodes = [n for n in material.node_tree.nodes if n.bl_idname in supported_nodes]
-        
+        # A dictionary with all our nodes paired with their Unreal counterparts 
         node_translate = {
         "ShaderNodeFresnel":"unreal.MaterialExpressionFresnel",
         "ShaderNodeUVMap":"unreal.MaterialExpressionTextureCoordinate",
         "ShaderNodeSeparateRGB":"unreal.MaterialExpressionMaterialFunctionCall",
+        #"ShaderNodeGroup":"",#"unreal.MaterialExpressionReroute",
+        #"NodeGroupInput":"unreal.MaterialExpressionReroute",
+        #"NodeGroupOutput":"unreal.MaterialExpressionReroute",
         "NodeReroute":"unreal.MaterialExpressionReroute",
         "ShaderNodeOutputMaterial":"",
         "ShaderNodeBsdfPrincipled":"unreal.MaterialExpressionMakeMaterialAttributes",
@@ -200,8 +211,24 @@ class TransMatOperator(bpy.types.Operator):
         "SOFT_LIGHT":"unreal.MaterialExpressionMaterialFunctionCall",
         }
         
+        # Acting on the currently active material
+        material = bpy.context.material
+
+        # Ungrouping Group Nodes
+        for node in material.node_tree.nodes:
+            if node.bl_idname == "ShaderNodeGroup":
+                material.node_tree.nodes.active = node
+                bpy.ops.node.group_ungroup()
+
+################################################################################
+        
+        # Thanks to Jim Kroovy for this - prevents crashes with unsupported nodes
+        nodes = [n for n in material.node_tree.nodes if n.bl_idname in supported_nodes]
+        
+        # A list of the input sockets on the node
         inputsockets = []
         
+        # A list of supported nodes that we can perform subsequent actions on
         uenodes = []
 
 ################################################################################        
@@ -224,7 +251,7 @@ class TransMatOperator(bpy.types.Operator):
                 print("connect_property = unreal.MaterialEditingLibrary.connect_material_property")
                 print(f"tasks = []")
                 
-##########################################################################`######
+################################################################################
 # Importing the textures
 ################################################################################
                 
@@ -265,7 +292,13 @@ class TransMatOperator(bpy.types.Operator):
                     
                     uenodename = node.name.replace(".","").replace(" ","")
                     node.name = uenodename
-                                            
+                    
+#                    if node.bl_idname == "ShaderNodeGroup":
+#                        for subnode in [n for n in node.node_tree.nodes if n.bl_idname in supported_nodes]:
+#                            subnodename = subnode.bl_idname.replace(".","").replace(" ","")
+#                            print(f"{subnodename} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")   
+#                            uenodes.append(subnode)
+                                                
                     # Math node retrieves the operation: ADD, MULTIPLY, COSINE, etc
                     if node.bl_idname == "ShaderNodeMath":
                         nodeinfo["Unreal_Node"] = node_translate[node.operation]
@@ -282,7 +315,7 @@ class TransMatOperator(bpy.types.Operator):
                     if not node.bl_idname == "ShaderNodeMixRGB" and not node.bl_idname == "ShaderNodeMath" and not node.bl_idname == "ShaderNodeVectorMath":
                         nodeinfo["Unreal_Node"] = node_translate[node.bl_idname]                          
                     
-                    if not node.bl_idname == 'ShaderNodeOutputMaterial':    
+                    if not node.bl_idname == 'ShaderNodeOutputMaterial' and not node.bl_idname == "ShaderNodeGroup":    
                         print(f"{str(uenodename)} = create_expression({material.name},{nodeinfo['Unreal_Node']},{node.location[0]-800},{node.location[1]-400})")    
                         uenodes.append(node)
 
@@ -457,7 +490,7 @@ class TransMatOperator(bpy.types.Operator):
                                     print(f"{node.name}_connection = create_connection({link.from_node.name},'',{link.to_node.name},'{inputsockets[int(socketindex_formatted.group(1))]}')")
 
 ################################################################################
-                                                
+        bpy.ops.ed.undo()                                        
         return {'FINISHED'}
 
 ################################################################################
