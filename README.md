@@ -25,6 +25,8 @@ If you do add a subfolder, the script will either find it, if it exists, or crea
 
 Next, if you're using procedural noise nodes, you can choose your resolution, and bake them to textures.
 
+Be patient if you have a lot of noise nodes and you're baking at a high resolution, it will take time!
+
 Transmat now autodetects the connections of the noise nodes, and replaces them with your newly baked textures!
 
 Now, click the 'Transmat!' button.
