@@ -11,7 +11,7 @@ Check out the example at the bottom of the page to see what it looks like!
 
 ## How to Use
 
-Download and unzip the file, then, in Blender, click 'Edit' > 'Preferences' > 'Addons' > 'Install' and choose 'Transmat.py'
+Download and unzip the file, then, in Blender, click __'Edit'__ > __'Preferences'__ > __'Addons'__ > __'Install'__ and choose __'Transmat.py'__
 
 This will add a properties panel to the Node Editor.
 
@@ -29,9 +29,9 @@ Be patient if you have a lot of noise nodes and you're baking at a high resoluti
 
 Transmat now autodetects the connections of the noise nodes, and replaces them with your newly baked textures!
 
-Now, click the 'Transmat!' button.
+Now, click the __'Transfer Material!'__ button.
 
-Then, in Unreal _(with the Python plug-in and Editor Scripting enabled)_ click 'File' > 'Execute Python Script'.
+Then, in Unreal _(with the Python plug-in and Editor Scripting enabled)_ click __'File'__ > __'Execute Python Script'__.
 
 Navigate to the python file that was just created, and click 'OK' - _eg 'yourmaterial_TM.py'_
 
