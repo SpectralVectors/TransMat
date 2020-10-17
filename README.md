@@ -171,6 +171,8 @@ Anything NOT in the above list can be considered unsupported, however, there are
 
 - Group
 
+- ShadertoRGB
+
 - Frame
 
 - Script
