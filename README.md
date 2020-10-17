@@ -63,83 +63,89 @@ Transmat will find and import all the image textures from your Blender material,
 
 #### Math Node Operations:
 
-- __Math - Add =>__ Add
+- __Add =>__ Add
 
-- __Math - Subtract =>__ Subtract
+- __Subtract =>__ Subtract
 
-- __Math - Multiply =>__ Multiply
+- __Multiply =>__ Multiply
 
-- __Math - Divide =>__ Divide
+- __Divide =>__ Divide
 
-- __Math - Sine =>__ Sine
+- __Sine =>__ Sine
 
-- __Math - Arcsine =>__ Arcsine
+- __Arcsine =>__ Arcsine
 
-- __Math - Cosine =>__ Cosine
+- __Cosine =>__ Cosine
 
-- __Math - Arccosine =>__ Arccosine 
+- __Arccosine =>__ Arccosine 
 
-- __Math - Power =>__ Power
+- __Power =>__ Power
 
-- __Math - Minimum =>__ Min
+- __Minimum =>__ Min
 
-- __Math - Maximum =>__ Max
+- __Maximum =>__ Max
 
-- __Math - Round =>__ Round
+- __Round =>__ Round
 
-- __Math - Absolute =>__ Abs
+- __Absolute =>__ Abs
 
-- __Vector Math - Normalize  =>__ Normalize
+#### Vector Math Node Operations:
 
-- __Vector Math - Dot Product  =>__ DotProduct
+- __Normalize  =>__ Normalize
 
-- __Vector Math - Cross Product =>__ CrossProduct
+- __Dot Product  =>__ DotProduct
 
-- __MixRGB - Mix =>__ LinearInterpolate (our friend Lerp!)
+- __Cross Product =>__ CrossProduct
 
-- __MixRGB - Color Burn =>__ FunctionCall - Blend_ColorBurn
+#### MixRGB Node Blend Types:
 
-- __MixRGB - Color Dodge =>__ FunctionCall - Blend_ColorDodge
+- __Mix =>__ LinearInterpolate (our friend Lerp!)
 
-- __MixRGB - Darken =>__ FunctionCall - Blend_Darken
+- __Color Burn =>__ FunctionCall - Blend_ColorBurn
 
-- __MixRGB - Difference =>__ FunctionCall - Blend_Difference
+- __Color Dodge =>__ FunctionCall - Blend_ColorDodge
 
-- __MixRGB - Lighten =>__ FunctionCall - Blend_Lighten
+- __Darken =>__ FunctionCall - Blend_Darken
 
-- __MixRGB - Linear Light =>__ FunctionCall - Blend_LinearLight
+- __Difference =>__ FunctionCall - Blend_Difference
 
-- __MixRGB - Overlay =>__ FunctionCall - Blend_Overlay
+- __Lighten =>__ FunctionCall - Blend_Lighten
 
-- __MixRGB - Screen =>__ FunctionCall - Blend_Screen
+- __Linear Light =>__ FunctionCall - Blend_LinearLight
 
-- __MixRGB - Soft Light =>__ FunctionCall - Blend_SoftLight
+- __Overlay =>__ FunctionCall - Blend_Overlay
 
-- __Brick Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Screen =>__ FunctionCall - Blend_Screen
 
-- __Checker Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Soft Light =>__ FunctionCall - Blend_SoftLight
 
-- __Environment Texture - via Bake Noise Nodes button =>__ TextureSample
+#### Procedural Texture Nodes - via the Bake Noise Nodes button:
 
-- __Gradient Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Brick Texture =>__ TextureSample
 
-- __IES Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Checker Texture =>__ TextureSample
 
-- __Musgrave Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Environment Texture =>__ TextureSample
 
-- __Magic Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Gradient Texture =>__ TextureSample
 
-- __Noise Texture - via Bake Noise Nodes button =>__ TextureSample
+- __IES Texture =>__ TextureSample
 
-- __Point Density Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Musgrave Texture =>__ TextureSample
 
-- __Sky Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Magic Texture =>__ TextureSample
 
-- __Voronoi Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Noise Texture =>__ TextureSample
 
-- __Wave Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Point Density Texture =>__ TextureSample
 
-- __White Noise Texture - via Bake Noise Nodes button =>__ TextureSample
+- __Sky Texture =>__ TextureSample
+
+- __Voronoi Texture =>__ TextureSample
+
+- __Wave Texture =>__ TextureSample
+
+- __White Noise Texture =>__ TextureSample
 
 ## Currently unsupported Blender Nodes
 
