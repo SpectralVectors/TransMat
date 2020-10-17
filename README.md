@@ -173,7 +173,7 @@ Anything NOT in the above list can be considered unsupported, however, there are
 
 - Combine RGB, XYZ, HSV
 
-- Group
+- Group - __Partial Support - see Limitations__
 
 - ShadertoRGB
 
@@ -186,6 +186,8 @@ If a node is in the unsupported list, it doesn't mean it won't be supported, onl
 I'm planning on first getting all the nodes that have direct equivalents sorted out, then looking at nodes that require custom coded solutions.
 
 ## Limitations
+
+Node groups work with the __'Transfer Material'__ function, but, for now, in order to bake textures in Groups, the groups must be broken.
 
 If you use a node that is not on the supported list, your material will likely not transfer properly.
 
