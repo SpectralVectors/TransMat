@@ -17,7 +17,7 @@ This will add a properties panel to the Node Editor.
 
 Once you have created your material, choose a directory to output the python file to.
 
-Then, if you wish, you can specify subfolders for the material and textures to be placed in.
+Then, if you wish, you can specify Unreal import subfolders for the material and textures to be placed in.
 
 If you do not specify any folders, they will go to your game's Content folder by default.
 
