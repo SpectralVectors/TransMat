@@ -29,7 +29,7 @@ _(eg Brick, Checker, Gradient, Magic, Musgrave, Noise, Point Density, Sky, Voron
 
 Be patient if you have a lot of noise nodes and you're baking at a high resolution, it will take time!
 
-Transmat now autodetects the connections of the noise nodes, and replaces them with your newly baked textures!
+Transmat then checks the output connections of the noise nodes, and replaces them with your newly baked textures!
 
 Now, click the __'Transfer Material!'__ button.
 
