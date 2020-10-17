@@ -98,7 +98,7 @@ class BakeNoises(bpy.types.Operator):
             
             bpy.ops.node.add_node(type="ShaderNodeTexImage")
             image = bpy.context.active_node
-            bpy.context.active_node.location[0] = noisenode.location[0]-300
+            bpy.context.active_node.location[0] = noisenode.location[0]-250
             bpy.context.active_node.location[1] = noisenode.location[1]
             bpy.context.active_node.image = noisebake
             
