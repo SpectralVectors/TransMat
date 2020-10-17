@@ -33,7 +33,7 @@ Now, click the 'Transmat!' button.
 
 Then, in Unreal _(with the Python plug-in and Editor Scripting enabled)_ click 'File' > 'Execute Python Script'.
 
-Navigate to the python file that was just created, and click OK - eg "yourmaterial_TM.py"
+Navigate to the python file that was just created, and click 'OK' - _eg "yourmaterial_TM.py"
 
 Transmat will find and import all the image textures from your Blender material, and plug them into the right nodes!
 
