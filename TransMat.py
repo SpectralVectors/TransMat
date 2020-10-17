@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 2, 5),
+    'version': (0, 2, 7),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -20,7 +20,7 @@ bl_info = {
 class TransmatPaths(bpy.types.PropertyGroup):
     
     exportdirectory : bpy.props.StringProperty(
-        name = "Python File",
+        name = "Export",
         description = "Path where the .py will be saved",
         default = "",
         subtype = 'DIR_PATH'
@@ -132,7 +132,7 @@ class TransMatOperator(bpy.types.Operator):
     def execute(self, context):
         
         material = bpy.context.material
-        #nodes = material.node_tree.nodes
+        
         supported_nodes = [
         "ShaderNodeFresnel",
         "ShaderNodeUVMap",
@@ -151,6 +151,7 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeVectorMath",
         "ShaderNodeMixRGB"
         ]
+        
         # Thanks to Jim Kroovy for this - prevents crashes with unsupported nodes
         nodes = [n for n in material.node_tree.nodes if n.bl_idname in supported_nodes]
         
@@ -476,7 +477,8 @@ class TransMatPanel(bpy.types.Panel):
         layout = self.layout
         
         column = layout.column()
-        column.label(text="Directory where the .py will be saved", icon='FILE_FOLDER')
+        column.label(text="Export Directory", icon='FILE_FOLDER')
+        column.label(text="(Folder where the .py will be saved)")
         
         row = layout.row()
         row.prop(context.scene.transmatpaths, 'exportdirectory')
@@ -485,7 +487,8 @@ class TransMatPanel(bpy.types.Panel):
         column.label(text="")
         
         column = layout.column()
-        column.label(text="Optional Subfolders - relative to Game/Content/", icon='FILE_FOLDER')
+        column.label(text="Unreal Import Subfolders", icon='FILE_FOLDER')
+        column.label(text="(relative to Game/Content/)")
         
         row = layout.row()
         row.prop(context.scene.transmatpaths, 'materialdirectory')
@@ -497,7 +500,8 @@ class TransMatPanel(bpy.types.Panel):
         column.label(text="")
         
         column = layout.column()
-        column.label(text="Bake procedural noise nodes to textures", icon='NODE_SEL')
+        column.label(text="Bake noise nodes to textures", icon='NODE_SEL')
+        column.label(text="(Textures save to Export folder)")
         
         row = layout.row()
         row.prop(context.scene.transmatpaths, 'noiseresolution')
@@ -509,7 +513,7 @@ class TransMatPanel(bpy.types.Panel):
         column.label(text="")
         
         column = layout.column()
-        column.label(text="Transfer Material to Unreal Python File", icon='MATERIAL')
+        column.label(text="Translate Material for Unreal", icon='MATERIAL')
         
         row = layout.row()
         row.operator("blui.transmat_operator", icon='EXPORT')
