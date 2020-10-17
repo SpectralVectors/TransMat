@@ -37,115 +37,115 @@ Transmat will find and import all the image textures from your Blender material,
 
 ## Currently supported Blender Nodes
 
-### __Blender Node  =>__  Unreal Material Expression Node
+### __Blender Node    =>__    Unreal Material Expression Node
 
-- __Principled BSDF =>__ MakeMaterialAttributes
+- __Principled BSDF  =>__   MakeMaterialAttributes
 
-- __Image Texture =>__ TextureSample
+- __Image Texture  =>__   TextureSample
 
-- __Texture Coordinate =>__ TextureCoordinate
+- __Texture Coordinate   =>__  TextureCoordinate
 
-- __UV Map =>__ TextureCoordinate
+- __UV Map   =>__  TextureCoordinate
 
-- __Mix Shader =>__ BlendMaterialAttributes
+- __Mix Shader   =>__   BlendMaterialAttributes
 
-- __Add Shader =>__ Add
+- __Add Shader  =>__   Add
 
-- __Invert =>__ OneMinus
+- __Invert  =>__   OneMinus
 
-- __Fresnel =>__ Fresnel
+- __Fresnel   =>__  Fresnel
 
-- __Value =>__ Constant
+- __Value   =>__  Constant
 
-- __RGB =>__ Constant3Vector
+- __RGB   =>__  Constant3Vector
 
-- __Reroute =>__ Reroute
+- __Reroute   =>__   Reroute
 
 #### Math Node Operations:
 
-- __Add =>__ Add
+- __Add   =>__  Add
 
-- __Subtract =>__ Subtract
+- __Subtract  =>__   Subtract
 
-- __Multiply =>__ Multiply
+- __Multiply  =>__   Multiply
 
-- __Divide =>__ Divide
+- __Divide  =>__   Divide
 
-- __Sine =>__ Sine
+- __Sine  =>__  Sine
 
-- __Arcsine =>__ Arcsine
+- __Arcsine   =>__   Arcsine
 
-- __Cosine =>__ Cosine
+- __Cosine  =>__   Cosine
 
-- __Arccosine =>__ Arccosine 
+- __Arccosine   =>__  Arccosine 
 
-- __Power =>__ Power
+- __Power   =>__   Power
 
-- __Minimum =>__ Min
+- __Minimum   =>__   Min
 
-- __Maximum =>__ Max
+- __Maximum   =>__   Max
 
-- __Round =>__ Round
+- __Round   =>__  Round
 
-- __Absolute =>__ Abs
+- __Absolute  =>__  Abs
 
 #### Vector Math Node Operations:
 
-- __Normalize  =>__ Normalize
+- __Normalize    =>__   Normalize
 
-- __Dot Product  =>__ DotProduct
+- __Dot Product    =>__   DotProduct
 
-- __Cross Product =>__ CrossProduct
+- __Cross Product  =>__  CrossProduct
 
 #### MixRGB Node Blend Types:
 
-- __Mix =>__ LinearInterpolate (our friend Lerp!)
+- __Mix   =>__  LinearInterpolate (our friend Lerp!)
 
-- __Color Burn =>__ FunctionCall - Blend_ColorBurn
+- __Color Burn  =>__  FunctionCall - Blend_ColorBurn
 
-- __Color Dodge =>__ FunctionCall - Blend_ColorDodge
+- __Color Dodge   =>__  FunctionCall - Blend_ColorDodge
 
-- __Darken =>__ FunctionCall - Blend_Darken
+- __Darken  =>__   FunctionCall - Blend_Darken
 
-- __Difference =>__ FunctionCall - Blend_Difference
+- __Difference  =>__   FunctionCall - Blend_Difference
 
-- __Lighten =>__ FunctionCall - Blend_Lighten
+- __Lighten   =>__  FunctionCall - Blend_Lighten
 
-- __Linear Light =>__ FunctionCall - Blend_LinearLight
+- __Linear Light  =>__  FunctionCall - Blend_LinearLight
 
-- __Overlay =>__ FunctionCall - Blend_Overlay
+- __Overlay   =>__  FunctionCall - Blend_Overlay
 
-- __Screen =>__ FunctionCall - Blend_Screen
+- __Screen  =>__   FunctionCall - Blend_Screen
 
-- __Soft Light =>__ FunctionCall - Blend_SoftLight
+- __Soft Light  =>__   FunctionCall - Blend_SoftLight
 
 #### Procedural Texture Nodes - via the Bake Noise Nodes button:
 
-- __Brick Texture =>__ TextureSample
+- __Brick Texture   =>__  TextureSample
 
-- __Checker Texture =>__ TextureSample
+- __Checker Texture   =>__  TextureSample
 
-- __Environment Texture =>__ TextureSample
+- __Environment Texture   =>__   TextureSample
 
-- __Gradient Texture =>__ TextureSample
+- __Gradient Texture  =>__   TextureSample
 
-- __IES Texture =>__ TextureSample
+- __IES Texture   =>__  TextureSample
 
-- __Musgrave Texture =>__ TextureSample
+- __Musgrave Texture  =>__  TextureSample
 
-- __Magic Texture =>__ TextureSample
+- __Magic Texture   =>__   TextureSample
 
-- __Noise Texture =>__ TextureSample
+- __Noise Texture  =>__  TextureSample
 
-- __Point Density Texture =>__ TextureSample
+- __Point Density Texture  =>__  TextureSample
 
-- __Sky Texture =>__ TextureSample
+- __Sky Texture   =>__   TextureSample
 
-- __Voronoi Texture =>__ TextureSample
+- __Voronoi Texture   =>__  TextureSample
 
-- __Wave Texture =>__ TextureSample
+- __Wave Texture  =>__   TextureSample
 
-- __White Noise Texture =>__ TextureSample
+- __White Noise Texture  =>__  TextureSample
 
 ## Currently unsupported Blender Nodes
 
