@@ -1,4 +1,4 @@
-# TransMat
+# TransMat v0.2.8
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 ## Description
@@ -204,6 +204,16 @@ If a node has a connection, as well as a value entered into another socket, it c
 If it has a connection, it wipes all input values, and if it has an input value, it breaks all the connections.
 
 Possibly a fixable issue, possibly a limitation of the interface.
+
+## Acknowledgements and Thanks
+
+angjminer's Project BlUEMan demonstrated a similar functionality a few years ago, this is an attempt to achieve a similar result using an open framework.
+
+Jim Kroovy submitted a crash fix, and a refactoring suggestion that will likely be implemented soon, and may solve some other current limitations.
+
+Momchilo mentioned how the GPL license could negatively affect creators' ability to license works made using this tool, so the license has changed to MIT!
+
+And a massive thanks to batFINGER, CodeManX, and sambler for their countless contributions over the years to blender.stackexchange!
 
 ## Example output (new_material_TM.py):
 ~~~
