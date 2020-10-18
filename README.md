@@ -211,7 +211,7 @@ angjminer's Project BlUEMan demonstrated a similar functionality a few years ago
 
 Jim Kroovy submitted a crash fix, and a refactoring suggestion that will likely be implemented soon, and may solve some other current limitations.
 
-Momchilo mentioned how the GPL license could negatively affect creators' ability to license works made using this tool, so the license has changed to MIT!
+Momchilo has pitched in with some licensing resources.
 
 And a massive thanks to batFINGER, CodeManX, and sambler for their countless contributions over the years to blender.stackexchange!
 
