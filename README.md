@@ -1,4 +1,4 @@
-# TransMat v0.2.8
+# TransMat v0.3.0
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 ## Description
@@ -64,6 +64,18 @@ Transmat will find and import all the image textures from your Blender material,
 - __RGB   =>__  Constant3Vector
 
 - __Reroute   =>__   Reroute
+
+- __Separate RGB   =>__   FunctionCall - BreakOutFloat3Components
+
+- __Separate XYZ   =>__   FunctionCall - BreakOutFloat3Components
+
+- __Separate HSV   =>__   FunctionCall - BreakOutFloat3Components
+
+- __Combine RGB   =>__   FunctionCall - MakeFloat3
+
+- __Combine XYZ   =>__   FunctionCall - MakeFloat3
+
+- __Combine HSV   =>__   FunctionCall - MakeFloat3
 
 #### Math Node Operations:
 
@@ -155,9 +167,9 @@ Transmat will find and import all the image textures from your Blender material,
 
 Anything NOT in the above list can be considered unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials, those are explicitly stated below.
 
-- Color Ramp
+- Color Ramp - __Coming Soon!__
 
-- Mapping
+- Mapping - __Coming Soon!__
 
 - Normal
 
@@ -168,10 +180,6 @@ Anything NOT in the above list can be considered unsupported, however, there are
 - RGB Curves
 
 - Brightness/Contrast
-
-- Separate RGB, XYZ, HSV
-
-- Combine RGB, XYZ, HSV
 
 - Group - __Partial Support - see Limitations__
 
@@ -219,98 +227,95 @@ And a massive thanks to batFINGER, CodeManX, and sambler for their countless con
 ~~~
 import unreal
 
-new_material=unreal.AssetToolsHelpers.get_asset_tools().create_asset('new_material','/Game/Materials/', unreal.Material, unreal.MaterialFactoryNew())
-new_material.set_editor_property('use_material_attributes',True)
+GroupTest1=unreal.AssetToolsHelpers.get_asset_tools().create_asset('GroupTest1','/Game/', unreal.Material, unreal.MaterialFactoryNew())
+GroupTest1.set_editor_property('use_material_attributes',True)
 
 create_expression = unreal.MaterialEditingLibrary.create_material_expression
 create_connection = unreal.MaterialEditingLibrary.connect_material_expressions
 connect_property = unreal.MaterialEditingLibrary.connect_material_property
-tasks = []
 
-### Textures
-
-RenderTest_png = 'D:\Blender\Blends\RenderTest.png'
-
-RenderTest_png_import = unreal.AssetImportTask()
-RenderTest_png_import.set_editor_property('automated',True)
-RenderTest_png_import.set_editor_property('destination_path','/Game/Textures/')
-RenderTest_png_import.set_editor_property('destination_name','RenderTest_png')
-RenderTest_png_import.set_editor_property('factory',unreal.TextureFactory())
-RenderTest_png_import.set_editor_property('filename',RenderTest_png)
-RenderTest_png_import.set_editor_property('replace_existing',True)
-RenderTest_png_import.set_editor_property('save',True)
-tasks.append(RenderTest_png_import)
-
-UE4Man_Logo_Bakedn_TGA = 'D:\Blender\Blends\UE4Man_Logo_Bakedn.TGA'
-
-UE4Man_Logo_Bakedn_TGA_import = unreal.AssetImportTask()
-UE4Man_Logo_Bakedn_TGA_import.set_editor_property('automated',True)
-UE4Man_Logo_Bakedn_TGA_import.set_editor_property('destination_path','/Game/Textures/')
-UE4Man_Logo_Bakedn_TGA_import.set_editor_property('destination_name','UE4Man_Logo_Bakedn_TGA')
-UE4Man_Logo_Bakedn_TGA_import.set_editor_property('factory',unreal.TextureFactory())
-UE4Man_Logo_Bakedn_TGA_import.set_editor_property('filename',UE4Man_Logo_Bakedn_TGA)
-UE4Man_Logo_Bakedn_TGA_import.set_editor_property('replace_existing',True)
-UE4Man_Logo_Bakedn_TGA_import.set_editor_property('save',True)
-tasks.append(UE4Man_Logo_Bakedn_TGA_import)
-
-unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(tasks)
-
-### Nodes
-PrincipledBSDF = create_expression(new_material,unreal.MaterialExpressionMakeMaterialAttributes,-440.0,-20.0)
-AddShader = create_expression(new_material,unreal.MaterialExpressionAdd,-120.0,0.0)
-MixShader = create_expression(new_material,unreal.MaterialExpressionBlendMaterialAttributes,80.0,40.0)
-ImageTexture = create_expression(new_material,unreal.MaterialExpressionTextureSample,-1160.0,-540.0)
-ImageTexture001 = create_expression(new_material,unreal.MaterialExpressionTextureSample,-1260.0,-820.0)
-RGB001 = create_expression(new_material,unreal.MaterialExpressionConstant3Vector,-1320.0,-540.0)
-Math001 = create_expression(new_material,unreal.MaterialExpressionAdd,-940.0,-300.0)
-Invert = create_expression(new_material,unreal.MaterialExpressionOneMinus,-940.0,-180.0)
-Math = create_expression(new_material,unreal.MaterialExpressionAdd,-1220.0,-280.0)
-Value001 = create_expression(new_material,unreal.MaterialExpressionConstant,-1660.0,-480.0)
-Value = create_expression(new_material,unreal.MaterialExpressionConstant,-1660.0,-580.0)
-Reroute = create_expression(new_material,unreal.MaterialExpressionReroute,-940.0,-800.0)
-Mix001 = create_expression(new_material,unreal.MaterialExpressionLinearInterpolate,-1440.0,-500.0)
-Mix002 = create_expression(new_material,unreal.MaterialExpressionMaterialFunctionCall,-880.0,-420.0)
-RGB = create_expression(new_material,unreal.MaterialExpressionConstant3Vector,-1880.0,-40.0)
-SeparateRGB = create_expression(new_material,unreal.MaterialExpressionMaterialFunctionCall,-960.0,0.0)
-Mix = create_expression(new_material,unreal.MaterialExpressionMaterialFunctionCall,-1360.0,100.0)
-UVMap = create_expression(new_material,unreal.MaterialExpressionTextureCoordinate,-1900.0,-380.0)
-VectorMath = create_expression(new_material,unreal.MaterialExpressionNormalize,-1440.0,-120.0)
-TextureCoordinate = create_expression(new_material,unreal.MaterialExpressionTextureCoordinate,-1660.0,-220.0)
-Fresnel = create_expression(new_material,unreal.MaterialExpressionFresnel,-1580.0,60.0)
-
-### Material Functions
-ImageTexture.texture = unreal.load_asset('/Game/Textures/RenderTest_png')
-ImageTexture001.texture = unreal.load_asset('/Game/Textures/UE4Man_Logo_Bakedn_TGA')
+mat_func_burn = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorBurn')
+mat_func_dodge = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_ColorDodge')
 mat_func_darken = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Darken')
-Mix002.set_editor_property('material_function',mat_func_darken)
-mat_func_separate = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components')
-SeparateRGB.set_editor_property('material_function',mat_func_separate)
+mat_func_difference = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Difference')
+mat_func_lighten = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Lighten')
+mat_func_linear_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_LinearLight')
+mat_func_overlay = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Overlay')
 mat_func_screen = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_Screen')
-Mix.set_editor_property('material_function',mat_func_screen)
+mat_func_soft_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_SoftLight')
+mat_func_separate = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components')
+mat_func_combine = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3')
 
-### Connections
-PrincipledBSDF_connection = create_connection(PrincipledBSDF,'',AddShader,'A')
-AddShader_connection = create_connection(AddShader,'',MixShader,'B')
-# Output Node
-ImageTexture_connection = create_connection(ImageTexture,'',Mix002,'Base')
-ImageTexture001_connection = create_connection(ImageTexture001,'',Reroute,'')
-RGB001.constant = (0.014735688455402851,0.05303531885147095,0.15487249195575714)
-RGB001_connection = create_connection(RGB001,'',ImageTexture,'UVs')
-Math001_connection = create_connection(Math001,'',PrincipledBSDF,'Anisotropy')
-Invert_connection = create_connection(Invert,'',PrincipledBSDF,'Specular')
-Math_connection = create_connection(Math,'',Invert,'')
-Math_connection = create_connection(Math,'',Math001,'A')
-Value001.r = 0.4000000059604645
-Value001_connection = create_connection(Value001,'',Math,'B')
-Value.r = 0.800000011920929
-Value_connection = create_connection(Value,'',Mix001,'B')
-Reroute_connection = create_connection(Reroute,'',PrincipledBSDF,'Normal')
-Mix001_connection = create_connection(Mix001,'',Math001,'B')
-Mix002_connection = create_connection(Mix002,'',PrincipledBSDF,'EmissiveColor')
-RGB.constant = (0.49999991059303284,0.05486849695444107,0.0)
-RGB_connection = create_connection(RGB,'',SeparateRGB,'Float3')
-SeparateRGB_connection = create_connection(SeparateRGB,'',PrincipledBSDF,'Roughness')
-Mix_connection = create_connection(Mix,'',PrincipledBSDF,'BaseColor')
-VectorMath_connection = create_connection(VectorMath,'',Math,'A')
-TextureCoordinate_connection = create_connection(TextureCoordinate,'',VectorMath,'VectorInput')
+import_tasks = []
+
+### Importing Textures
+BrickTexture_001 = 'D:\Blender\Scripts\TransmatOutputs\BrickTexture001.png'
+
+BrickTexture_001_import = unreal.AssetImportTask()
+BrickTexture_001_import.set_editor_property('automated',True)
+BrickTexture_001_import.set_editor_property('destination_path','/Game/')
+BrickTexture_001_import.set_editor_property('destination_name','BrickTexture_001')
+BrickTexture_001_import.set_editor_property('factory',unreal.TextureFactory())
+BrickTexture_001_import.set_editor_property('filename',BrickTexture_001)
+BrickTexture_001_import.set_editor_property('replace_existing',True)
+BrickTexture_001_import.set_editor_property('save',True)
+import_tasks.append(BrickTexture_001_import)
+
+unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(import_tasks)
+
+### Creating Nodes
+MixShader = create_expression(GroupTest1,unreal.MaterialExpressionBlendMaterialAttributes,-280.0, -40.0)
+PrincipledBSDF = create_expression(GroupTest1,unreal.MaterialExpressionMakeMaterialAttributes,-820.0, -80.0)
+Mix = create_expression(GroupTest1,unreal.MaterialExpressionMaterialFunctionCall,-1240.0, 260.0)
+AddShader = create_expression(GroupTest1,unreal.MaterialExpressionAdd,-520.0, -180.0)
+SeparateRGB = create_expression(GroupTest1,unreal.MaterialExpressionMaterialFunctionCall,-1560.0, -120.0)
+RGB = create_expression(GroupTest1,unreal.MaterialExpressionConstant3Vector,-1120.0, -200.0)
+Value = create_expression(GroupTest1,unreal.MaterialExpressionConstant,-1820.0, 80.0)
+VectorMath = create_expression(GroupTest1,unreal.MaterialExpressionAdd,-1300.0, -580.0)
+CombineHSV = create_expression(GroupTest1,unreal.MaterialExpressionMaterialFunctionCall,-1500.0, -560.0)
+Value1 = create_expression(GroupTest1,unreal.MaterialExpressionConstant,-1820.0, 220.0)
+Math = create_expression(GroupTest1,unreal.MaterialExpressionAdd,-1340.0, 0.0)
+RGB1 = create_expression(GroupTest1,unreal.MaterialExpressionConstant3Vector,-1860.0, 540.0)
+RGB2 = create_expression(GroupTest1,unreal.MaterialExpressionConstant3Vector,-1860.0, 320.0)
+CombineRGB = create_expression(GroupTest1,unreal.MaterialExpressionMaterialFunctionCall,-1320.0, -140.0)
+ImageTexture = create_expression(GroupTest1,unreal.MaterialExpressionTextureSample,-1160.0, 450.0)
+UVMap = create_expression(GroupTest1,unreal.MaterialExpressionTextureCoordinate,-1360.0, 590.0)
+
+### Loading Material Functions and Textures
+Mix.set_editor_property('material_function',mat_func_soft_light)
+SeparateRGB.set_editor_property('material_function',mat_func_separate)
+CombineHSV.set_editor_property('material_function',mat_func_combine)
+CombineRGB.set_editor_property('material_function',mat_func_combine)
+ImageTexture.texture = unreal.load_asset('/Game/BrickTexture_001')
+
+### Setting Values
+RGB.constant = (0.5382355451583862, 0.004127298481762409, 0.0426042303442955)
+Value.r = 0.652999997138977
+Value1.r = 0.25600001215934753
+RGB1.constant = (0.14932090044021606, 0.23372754454612732, 0.49999991059303284)
+RGB2.constant = (0.13467830419540405, 0.49999991059303284, 0.2011043280363083)
+
+### Creating Connections
+PrincipledBSDF_connection = create_connection(PrincipledBSDF, '', AddShader, 'A')
+PrincipledBSDF_connection = create_connection(PrincipledBSDF, '', MixShader, 'B')
+Mix_connection = create_connection(Mix, '', PrincipledBSDF, 'Roughness')
+AddShader_connection = create_connection(AddShader, '', MixShader, 'A')
+SeparateRGB_connection = create_connection(SeparateRGB, 'R', CombineRGB, 'X')
+SeparateRGB_connection = create_connection(SeparateRGB, 'G', PrincipledBSDF, 'Specular')
+SeparateRGB_connection = create_connection(SeparateRGB, 'G', CombineRGB, 'Y')
+SeparateRGB_connection = create_connection(SeparateRGB, 'B', PrincipledBSDF, 'Anisotropy')
+SeparateRGB_connection = create_connection(SeparateRGB, 'B', CombineRGB, 'Z')
+RGB_connection = create_connection(RGB, '', PrincipledBSDF, 'BaseColor')
+Value_connection = create_connection(Value, '', PrincipledBSDF, 'AnisotropicRotation')
+Value_connection = create_connection(Value, '', Math, 'A')
+Value1_connection = create_connection(Value1, '', PrincipledBSDF, 'SpecularTint')
+Value1_connection = create_connection(Value1, '', Math, 'B')
+Math_connection = create_connection(Math, '', PrincipledBSDF, 'Metallic')
+RGB1_connection = create_connection(RGB1, '', PrincipledBSDF, 'SubsurfaceColor')
+RGB1_connection = create_connection(RGB1, '', Mix, 'Blend')
+RGB1_connection = create_connection(RGB1, '', SeparateRGB, 'Float3')
+RGB2_connection = create_connection(RGB2, '', Mix, 'Base')
+CombineRGB_connection = create_connection(CombineRGB, 'Result', PrincipledBSDF, 'Opacity')
+ImageTexture_connection = create_connection(ImageTexture, 'RGB', PrincipledBSDF, 'EmissiveColor')
+UVMap_connection = create_connection(UVMap, '', ImageTexture, 'UVs')
 ~~~
