@@ -217,7 +217,7 @@ Possibly a fixable issue, possibly a limitation of the interface.
 
 angjminer's Project BlUEMan demonstrated a similar functionality a few years ago, this is an attempt to achieve a similar result using an open framework.
 
-Jim Kroovy submitted a crash fix, and a refactoring suggestion that will likely be implemented soon, and may solve some other current limitations.
+Jim Kroovy submitted a crash fix, and a refactoring suggestion.
 
 Momchilo has pitched in with some licensing resources.
 
