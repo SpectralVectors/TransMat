@@ -203,8 +203,6 @@ Some very common Blender nodes are not yet supported and it will take time to fi
 
 It redirects stdout to create the python file, so if you are printing to the console, it will interfere with the script.
 
-Currently, only one output socket per node is supported, so SeparateRGB etc are not yet working properly.
-
 And, it would be wise to use Value or RGB nodes in place of entering values directly on the Principled BSDF, as there is currently an issue whereby:
 
 If a node has a connection, as well as a value entered into another socket, it causes problems.
