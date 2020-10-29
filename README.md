@@ -221,7 +221,7 @@ Momchilo has pitched in with some licensing resources.
 
 And a massive thanks to batFINGER, CodeManX, and sambler for their countless contributions over the years to blender.stackexchange!
 
-## Example output (new_material_TM.py):
+## Example output (GroupTest1_TM.py):
 ~~~
 import unreal
 
