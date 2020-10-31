@@ -6,7 +6,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 3, 0),
+    'version': (0, 3, 1),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -177,7 +177,6 @@ class TransMatOperator(bpy.types.Operator):
         
         # The officially supported Node List (in .bl_idname form)
         supported_nodes = [
-        #"ShaderNodeGroup",
         "ShaderNodeFresnel",
         "ShaderNodeUVMap",
         "ShaderNodeSeparateRGB",
@@ -211,9 +210,6 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeCombineRGB":"unreal.MaterialExpressionMaterialFunctionCall",
         "ShaderNodeCombineXYZ":"unreal.MaterialExpressionMaterialFunctionCall",
         "ShaderNodeCombineHSV":"unreal.MaterialExpressionMaterialFunctionCall",
-        #"ShaderNodeGroup":"",#"unreal.MaterialExpressionReroute",
-        #"NodeGroupInput":"unreal.MaterialExpressionReroute",
-        #"NodeGroupOutput":"unreal.MaterialExpressionReroute",
         "NodeReroute":"unreal.MaterialExpressionReroute",
         "ShaderNodeOutputMaterial":"",
         "ShaderNodeBsdfPrincipled":"unreal.MaterialExpressionMakeMaterialAttributes",
@@ -285,36 +281,33 @@ class TransMatOperator(bpy.types.Operator):
         "BSDF":"",
         },
         "ShaderNodeSeparateRGB":{"Image":"Float3","R":"R","G":"G","B":"B"},
-        "ShaderNodeSeparateXYZ":{"Image":"Float3","X":"R","Y":"G","Z":"B"},
+        "ShaderNodeSeparateXYZ":{"Vector":"Float3","X":"R","Y":"G","Z":"B"},
         "ShaderNodeSeparateHSV":{"Image":"Float3","H":"R","S":"G","V":"B"},
         "ShaderNodeCombineRGB":{"Image":"Result","R":"X","G":"Y","B":"Z"},
-        "ShaderNodeCombineXYZ":{"Image":"Result","X":"X","Y":"Y","Z":"Z"},
+        "ShaderNodeCombineXYZ":{"Vector":"Result","X":"X","Y":"Y","Z":"Z"},
         "ShaderNodeCombineHSV":{"Image":"Result","H":"X","S":"Y","V":"Z"},
         "ShaderNodeTexImage":{"Vector":"UVs","Color":"RGB"},
         "ShaderNodeFresnel":{"Fac":""},
         "ShaderNodeUVMap":{"UV":""},
         "NodeReroute":{"":""},
-        # Issues here with identical keys!
-        "ShaderNodeMixShader":{"1":"A","2":"B","0":"Alpha", "Shader":""},
+        "ShaderNodeMixShader":{"0":"Alpha","1":"A","2":"B","Shader":""},
         "ShaderNodeAddShader":{"0":"A","1":"B", "Shader":""},
         "ShaderNodeInvert":{"":""},
         "ShaderNodeTexCoord":{"":""},
-        # Issues here with identical keys! - but this will be done via blend_types anyway?
-        #"ShaderNodeMixRGB":{"Color1":"A", "Color2":"B", "Fac":"Alpha", "Color1":"Blend", "Color2":"Base", "Color":""},
         # Math Node Operations
         "ADD":{"0":"A","1":"B", "Scale":"","Value":""},
-        "SUBTRACT":{"0":"A","1":"B"},
-        "MULTIPLY":{"0":"A","1":"B"},
-        "DIVIDE":{"0":"A","1":"B"},
-        "SINE":{"0":""},
-        "ARCSINE":{"0":""},
-        "COSINE":{"0":""},
-        "ARCCOSINE":{"0":""},
-        "POWER":{"0":"A","1":"B"},
-        "MINIMUM":{"0":"A","1":"B"},
-        "MAXIMUM":{"0":"A","1":"B"},
-        "ROUND":{"0":""},
-        "ABSOLUTE":{"0":""},
+        "SUBTRACT":{"0":"A","1":"B","Value":""},
+        "MULTIPLY":{"0":"A","1":"B","Value":""},
+        "DIVIDE":{"0":"A","1":"B","Value":""},
+        "SINE":{"0":"","Value":""},
+        "ARCSINE":{"0":"","Value":""},
+        "COSINE":{"0":"","Value":""},
+        "ARCCOSINE":{"0":"","Value":""},
+        "POWER":{"0":"A","1":"B","Value":""},
+        "MINIMUM":{"0":"A","1":"B","Value":""},
+        "MAXIMUM":{"0":"A","1":"B","Value":""},
+        "ROUND":{"0":"","Value":""},
+        "ABSOLUTE":{"0":"","Value":""},
         # Vector Math Node Operations
         "NORMALIZE":{"0":"A","1":"B","Vector":""},
         "DOT_PRODUCT":{"0":"A","1":"B","Vector":""},
@@ -391,6 +384,7 @@ class TransMatOperator(bpy.types.Operator):
             'nodename' : '',
             'uenodename' : '',
             'location' : '',
+            'ID':'',
             'load_data' : [],
             'values' : [],
             'connections':[],
@@ -403,16 +397,16 @@ class TransMatOperator(bpy.types.Operator):
                 
                 if node.bl_idname == 'ShaderNodeMixRGB':
                     nodedata['uenodename'] = node_translate[node.blend_type]
-                    ID = node.blend_type
+                    nodedata['ID'] = node.blend_type
                 if node.bl_idname == 'ShaderNodeMath' or node.bl_idname == 'ShaderNodeVectorMath':
                     nodedata['uenodename'] = node_translate[node.operation]
-                    ID = node.operation    
+                    nodedata['ID'] = node.operation    
                 if not node.bl_idname == 'ShaderNodeMixRGB' and not node.bl_idname == 'ShaderNodeMath' and not node.bl_idname == 'ShaderNodeVectorMath':
                     nodedata['uenodename'] = node_translate[node.bl_idname]
-                    ID = node.bl_idname
+                    nodedata['ID'] = node.bl_idname
                     
                 nodedata['location'] = str(node.location[0] - 1600) + ", " + str(node.location[1] *-1 + 1200)
-            
+                ID = nodedata['ID']
                 # Input Values - disabled for now, but could be reimplememnted by adding and attaching value, RGB nodes in place of directly setting values
 #                for input in node.inputs:
 #                    if not input.bl_idname == 'NodeSocketShader':
@@ -457,7 +451,7 @@ class TransMatOperator(bpy.types.Operator):
                     nodedata['values'].append(rgb_output)
                     
                 # Material Functions and Textures - load_data   
-                if node.bl_idname == "ShaderNodeMixRGB":
+                if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX':
                     mat_func = str(f"{nodedata['nodename']}.set_editor_property('material_function',{material_function[ID]})")
                     nodedata['load_data'].append(mat_func)
                     
@@ -474,15 +468,8 @@ class TransMatOperator(bpy.types.Operator):
                 for output in node.outputs:
                     if output.is_linked:
                         for link in output.links:
-                            if not link.to_node.bl_idname == 'ShaderNodeOutputMaterial':
-                                
-                                if link.from_node.bl_idname == 'ShaderNodeMixRGB':
-                                    ID = link.from_node.blend_type
-                                if link.from_node.bl_idname == 'ShaderNodeMath' or link.from_node.bl_idname == 'ShaderNodeVectorMath':
-                                    ID = link.from_node.operation
-                                if not link.from_node.bl_idname == 'ShaderNodeMixRGB' and not link.from_node.bl_idname == 'ShaderNodeMath' or link.from_node.bl_idname == 'ShaderNodeVectorMath':
-                                    ID = link.from_node.bl_idname    
-                                
+                            if not link.to_node.bl_idname == 'ShaderNodeOutputMaterial':   
+                                ID = nodedata['ID']
                                 from_node = str(link.from_node.name).replace('.00','').replace(' ','')
                                 
                                 if link.from_node.bl_idname == 'ShaderNodeRGB' or link.from_node.bl_idname == 'ShaderNodeValue':
@@ -490,21 +477,29 @@ class TransMatOperator(bpy.types.Operator):
                                 else:
                                     from_socket = str(f"'{socket_translate[ID][link.from_socket.name]}'")
                                 
+                                if link.to_node.bl_idname == 'ShaderNodeMath' or link.to_node.bl_idname == 'ShaderNodeVectorMath' or link.to_node.bl_idname == 'ShaderNodeMixShader' or link.to_node.bl_idname == 'ShaderNodeAddShader':
+                                    socketnumber = re.sub("[^0-9]", "", link.to_socket.path_from_id())
+                                    socketnumberint = int(socketnumber)
+                                    linktonodeID = re.sub("[^0-9]", "", link.to_node.name)
+                                    linktonodeIDint = int(linktonodeID)
+                                    
+                                    if socketnumberint % 2 == 0:
+                                        socket = str(socketnumberint - 10 * linktonodeIDint)
+                                    if not socketnumberint % 2 ==0:
+                                        socket = str(socketnumberint - 10 * linktonodeIDint - 1)
+                                            
+                                if not link.to_node.bl_idname == 'ShaderNodeMath' and not link.to_node.bl_idname == 'ShaderNodeVectorMath' and not link.to_node.bl_idname == 'ShaderNodeMixShader' and not link.to_node.bl_idname == 'ShaderNodeAddShader':
+                                    socket = link.to_socket.name
+                                                
+                                to_node = str(link.to_node.name).replace('.00','').replace(' ','')
+                                    
                                 if link.to_node.bl_idname == 'ShaderNodeMixRGB':
                                     ID = link.to_node.blend_type
-                                    socket = link.to_socket.name
-                                if link.to_node.bl_idname == 'ShaderNodeMath' or link.to_node.bl_idname == 'ShaderNodeVectorMath':
-                                    ID = link.to_node.operation
-                                    socket = re.sub("[^0-9]", "", link.to_socket.path_from_id())
-                                if link.to_node.bl_idname == 'ShaderNodeMixShader' or link.to_node.bl_idname == 'ShaderNodeAddShader':
+                                if link.to_node.bl_idname == 'ShaderNodeMath' or node.bl_idname == 'ShaderNodeVectorMath':
+                                    ID = link.to_node.operation    
+                                if not link.to_node.bl_idname == 'ShaderNodeMixRGB' and not link.to_node.bl_idname == 'ShaderNodeMath' and not link.to_node.bl_idname == 'ShaderNodeVectorMath':
                                     ID = link.to_node.bl_idname
-                                    socket = re.sub("[^0-9]", "", link.to_socket.path_from_id())    
-                                #else:
-                                if not link.to_node.bl_idname == 'ShaderNodeMixRGB' and not link.to_node.bl_idname == 'ShaderNodeMath' and not link.to_node.bl_idname == 'ShaderNodeVectorMath' and not link.to_node.bl_idname == 'ShaderNodeMixShader' and not link.to_node.bl_idname == 'ShaderNodeAddShader':
-                                    ID = link.to_node.bl_idname
-                                    socket = link.to_socket.name
-                                            
-                                to_node = str(link.to_node.name).replace('.00','').replace(' ','')
+                                      
                                 to_socket = str(f"'{socket_translate[ID][socket]}'")
                                 
                                 connection = str(nodedata['nodename'] + "_connection = create_connection(" + from_node + ", " + from_socket+ ", " + to_node + ", " + to_socket+")")
@@ -546,7 +541,7 @@ class TransMatOperator(bpy.types.Operator):
                 print("")
                 print(f"import_tasks = []")
 
-        ################################################################################
+################################################################################
 
                 print("")
                 print("### Importing Textures")
@@ -567,7 +562,7 @@ class TransMatOperator(bpy.types.Operator):
                 print("")
                 print(f"unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(import_tasks)")
 
-        ################################################################################
+################################################################################
                 
                 print()
                 print("### Creating Nodes")    
@@ -605,7 +600,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.3.0"
+    bl_label = "TransMat v0.3.1"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
@@ -618,7 +613,6 @@ class TransMatPanel(bpy.types.Panel):
         box = layout.box()
         column = box.column()
         column.label(text="Export Directory", icon='FILE_FOLDER')
-        #column.label(text="(Folder where the .py will be saved)")
         
         row = box.row()
         row.prop(context.scene.transmatpaths, 'exportdirectory')
@@ -628,7 +622,6 @@ class TransMatPanel(bpy.types.Panel):
         box = layout.box()
         column = box.column()
         column.label(text="Unreal Import Subfolders", icon='FILE_FOLDER')
-        #column.label(text="(relative to Game/Content/)")
         
         row = box.row()
         row.prop(context.scene.transmatpaths, 'materialdirectory')
@@ -640,7 +633,6 @@ class TransMatPanel(bpy.types.Panel):
         box = layout.box()
         column = box.column()
         column.label(text="Bake noise nodes to textures", icon='NODE_SEL')
-        #column.label(text="(Textures save to Export folder)")
         
         row = box.row()
         row.prop(context.scene.transmatpaths, 'noiseresolution')
