@@ -1,4 +1,4 @@
-# TransMat v0.3.1
+# TransMat v0.3.2
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 ## Description
