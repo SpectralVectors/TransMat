@@ -6,7 +6,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 3, 3),
+    'version': (0, 3, 4),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -290,7 +290,7 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeTexImage":{"Vector":"UVs","Color":"RGB"},
         "ShaderNodeFresnel":{"Fac":""},
         "ShaderNodeUVMap":{"UV":""},
-        "NodeReroute":{"":""},
+        "NodeReroute":{"Input":"", "Output":""},
         "ShaderNodeMixShader":{"0":"Alpha","1":"A","2":"B","Shader":""},
         "ShaderNodeAddShader":{"0":"A","1":"B", "Shader":""},
         "ShaderNodeInvert":{"":""},
@@ -515,7 +515,7 @@ class TransMatOperator(bpy.types.Operator):
                                     ID = link.to_node.operation    
                                 if not link.to_node.bl_idname == 'ShaderNodeMixRGB' and not link.to_node.bl_idname == 'ShaderNodeMath' and not link.to_node.bl_idname == 'ShaderNodeVectorMath':
                                     ID = link.to_node.bl_idname
-                                   
+                                print(link.to_node.bl_idname, ID, socket)  
                                 to_socket = str(f"'{socket_translate[ID][socket]}'")
                                 
                                 connection = str(nodename + "_connection = create_connection(" + from_node + ", " + from_socket+ ", " + to_node + ", " + to_socket+")")
@@ -620,7 +620,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.3.3"
+    bl_label = "TransMat v0.3.4"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
