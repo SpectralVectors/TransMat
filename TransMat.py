@@ -6,7 +6,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 3, 2),
+    'version': (0, 3, 3),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -251,9 +251,9 @@ class TransMatOperator(bpy.types.Operator):
         "SOFT_LIGHT":"unreal.MaterialExpressionMaterialFunctionCall",
         }
         
+        # A dictionary with all our nodes and their Blender sockets, paired with their Unreal socket counterparts
+        # Some are left blank, as Unreal will grab the default output if you supply no name
         socket_translate = {
-        "ShaderNodeValue": {"Value":"R"},
-        "ShaderNodeRGB": {"Color":"Constant"},
         # Principled BSDF
         "ShaderNodeBsdfPrincipled": {
         "Base Color":"BaseColor",#0
@@ -278,8 +278,9 @@ class TransMatOperator(bpy.types.Operator):
         "Normal":"Normal",#19
         "Clearcoat Normal":"ClearCoatNormal",#20
         "Tangent":"Tangent",#21
-        "BSDF":"",
-        },
+        "BSDF":"",},
+        "ShaderNodeValue": {"Value":"R"},
+        "ShaderNodeRGB": {"Color":"Constant"},
         "ShaderNodeSeparateRGB":{"Image":"Float3","R":"R","G":"G","B":"B"},
         "ShaderNodeSeparateXYZ":{"Vector":"Float3","X":"R","Y":"G","Z":"B"},
         "ShaderNodeSeparateHSV":{"Image":"Float3","H":"R","S":"G","V":"B"},
@@ -325,6 +326,7 @@ class TransMatOperator(bpy.types.Operator):
         "SOFT_LIGHT":{"Color1":"Base", "Color2":"Blend", "Fac":"Alpha", "Color":""},
         }
         
+        # A dictionary with our Blender nodes and their Unreal MaterialFunction counterparts
         material_function = {
         'BURN':'mat_func_burn',
         'DODGE':'mat_func_dodge',
@@ -351,9 +353,10 @@ class TransMatOperator(bpy.types.Operator):
         texturedirectory = context.scene.transmatpaths.texturedirectory
         exportdirectory = context.scene.transmatpaths.exportdirectory
         
+        # Setting groups to False by default
         has_groups = False
         
-        # Ungrouping Group Nodes
+        # Ungrouping Group Nodes - first checks to see if there are groups, and, if so, sets has_groups to True
         for node in material.node_tree.nodes:
             if node.bl_idname == "ShaderNodeGroup":
                 has_groups = True
@@ -374,12 +377,13 @@ class TransMatOperator(bpy.types.Operator):
         for node in nodes:
             
             # nodedata - is a dictionary that will update for each loop with new node data
-            # nodename - is a formatted string of the unique name assigned to each node
-            # uenodename - is the unreal equivalent of the node, eg: ShaderNodeRGB -> unreal.MaterialExpressionConstant3Vector
-            # location - is a formatted string of the X and Y node location values, with Y inverted, and offsets added
-            # load_data - is a list of textures and material functions to load into nodes
-            # values - are any numerical values that can be input to nodes: constant, RGB, etc.
-            # connections - are formatted strings indicating: starting node, starting socket, ending node, ending socket
+            # 'nodename' - is a formatted string of the unique name assigned to each node
+            # 'uenodename' - is the unreal equivalent of the node, eg: ShaderNodeRGB -> unreal.MaterialExpressionConstant3Vector
+            # 'location' - is a formatted string of the X and Y node location values, with Y inverted, and offsets added
+            # 'ID' - is the type of data we use to identify the node type - eg node.bl_idname vs node.blend_type vs node.operation
+            # 'load_data' - is a list of textures and material functions to load into nodes
+            # 'values' - are any numerical values that can be input to nodes: constant, RGB, etc.
+            # 'connections' - are formatted strings indicating: starting node, starting socket, ending node, ending socket
             nodedata = {
             'nodename' : '',
             'uenodename' : '',
@@ -390,11 +394,16 @@ class TransMatOperator(bpy.types.Operator):
             'connections':[],
             }
             
+            # Ignoring the Material Output, as Unreal automatically supplies the output, but not a way to connect to it!
             if not node.bl_idname == 'ShaderNodeOutputMaterial':
                 
                 # Gathering and formatting our basic node information - nodename,uenodename,location
                 nodedata['nodename'] = str(node.name).replace('.0','').replace(' ','')
                 
+                # For the most part, using the bl_idname (node type) gives us the type of node we want, but 
+                # whereas Blender has only one Math node, with operations selected via enum, Unreal has separate 
+                # nodes for each operation, so, rather than getting the node type, we get the operation, for
+                # Math nodes, and the blend type for Mix nodes
                 if node.bl_idname == 'ShaderNodeMixRGB':
                     nodedata['uenodename'] = node_translate[node.blend_type]
                     nodedata['ID'] = node.blend_type
@@ -404,10 +413,14 @@ class TransMatOperator(bpy.types.Operator):
                 if not node.bl_idname == 'ShaderNodeMixRGB' and not node.bl_idname == 'ShaderNodeMath' and not node.bl_idname == 'ShaderNodeVectorMath':
                     nodedata['uenodename'] = node_translate[node.bl_idname]
                     nodedata['ID'] = node.bl_idname
-                    
+                
+                # The axes in Unreal's node editor seem to be the same for X, but inverted for Y
+                # I added an offset that I popped in visually, I could make this a property in the 
+                # preferences panel, if the offset doesn't work for everyon    
                 nodedata['location'] = str(node.location[0] - 1600) + ", " + str(node.location[1] *-1 + 1200)
                 ID = nodedata['ID']
                 nodename = nodedata['nodename']
+                
                 # Input Values - disabled for now, but could be reimplememnted by adding and attaching value, RGB nodes in place of directly setting values
 #                for input in node.inputs:
 #                    if not input.bl_idname == 'NodeSocketShader':
@@ -436,7 +449,9 @@ class TransMatOperator(bpy.types.Operator):
 #                                other_input = str(input_name + " = " + input_value)
 #                                nodedata['values'].append(other_input)
                 
-                # Output Values are gathered for Value and RGB nodes - values                
+                # Output Values are gathered for Value and RGB nodes - values
+                # When making connections, Unreal requires upper case, but when
+                # entering values, they must be lower case                
                 if node.bl_idname == 'ShaderNodeValue':
                     output_name = str(f"{nodename}.{str(socket_translate[ID][node.outputs[0].name]).lower()}")
                     output_value = str(node.outputs[0].default_value)
@@ -451,12 +466,8 @@ class TransMatOperator(bpy.types.Operator):
                     rgb_output = str(output_name + " = " + "(" + output_value_0 + ", " + output_value_1 + ", " + output_value_2 + ")")
                     nodedata['values'].append(rgb_output)
                     
-                # Material Functions and Textures - load_data   
-                if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX':
-                    mat_func = str(f"{nodename}.set_editor_property('material_function',{material_function[ID]})")
-                    nodedata['load_data'].append(mat_func)
-                    
-                if node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV":
+                # Material Functions and Textures - load_data
+                if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV":
                     mat_func = str(f"{nodename}.set_editor_property('material_function',{material_function[ID]})")    
                     nodedata['load_data'].append(mat_func)
                    
@@ -466,9 +477,13 @@ class TransMatOperator(bpy.types.Operator):
                     nodedata['load_data'].append(texture)
                 
                 # gathering data and formatting our Connection strings - connections
+                # We only look at outputs for connections to avoid redundancy
                 for output in node.outputs:
+                    # Only checking outputs that are connected
                     if output.is_linked:
+                        # Looping through our connections
                         for link in output.links:
+                            # Ignoring our Material Output, I should probably just remove this from an earlier list to avoid this ;p
                             if not link.to_node.bl_idname == 'ShaderNodeOutputMaterial':   
                                 ID = nodedata['ID']
                                 nodename = nodedata['nodename']
@@ -488,15 +503,9 @@ class TransMatOperator(bpy.types.Operator):
                                         linktonodeIDint = int(linktonodeID)
                                         socket = str(socketnumberint - linktonodeIDint * 10)
                                     else:
-                                        socket = str(socketnumberint)   
-#                                    if socketnumberint % 2 == 0:
-#                                        socket = str(socketnumberint - linktonodeIDint * 2)
-#                                    else:
-#                                        socket = str(socketnumberint - linktonodeIDint * 2 - 1)
+                                        socket = str(socketnumberint)
                                 else:           
-                                    socket = link.to_socket.name    
-                                #if not link.to_node.bl_idname == 'ShaderNodeMath' and not link.to_node.bl_idname == 'ShaderNodeVectorMath' and not link.to_node.bl_idname == 'ShaderNodeMixShader' and not link.to_node.bl_idname == 'ShaderNodeAddShader':
-                                    
+                                    socket = link.to_socket.name
                                                 
                                 to_node = str(link.to_node.name).replace('.0','').replace(' ','')
                                     
@@ -506,8 +515,6 @@ class TransMatOperator(bpy.types.Operator):
                                     ID = link.to_node.operation    
                                 if not link.to_node.bl_idname == 'ShaderNodeMixRGB' and not link.to_node.bl_idname == 'ShaderNodeMath' and not link.to_node.bl_idname == 'ShaderNodeVectorMath':
                                     ID = link.to_node.bl_idname
-                                
-                                print(link.to_node.name, ID, socket)
                                    
                                 to_socket = str(f"'{socket_translate[ID][socket]}'")
                                 
@@ -556,8 +563,10 @@ class TransMatOperator(bpy.types.Operator):
                 print("### Importing Textures")
                 for node in nodes:
                     if node.bl_idname == "ShaderNodeTexImage":
-                        image_name = str(node.image.name).replace('.','_').replace(' ','')
-                        print(f"{image_name} = '{str(node.image.filepath_from_user())}'")
+                        image_name = str(node.image.name).replace('.0','').replace(' ','')
+                        image_filepath = str(node.image.filepath_from_user())
+                        
+                        print(f"{image_name} = '{image_filepath}'")
                         print("")
                         print(f"{image_name}_import = unreal.AssetImportTask()")
                         print(f"{image_name}_import.set_editor_property('automated',True)")
@@ -568,6 +577,7 @@ class TransMatOperator(bpy.types.Operator):
                         print(f"{image_name}_import.set_editor_property('replace_existing',True)")
                         print(f"{image_name}_import.set_editor_property('save',True)")
                         print(f"import_tasks.append({image_name}_import)")
+                        
                 print("")
                 print(f"unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(import_tasks)")
 
@@ -579,6 +589,7 @@ class TransMatOperator(bpy.types.Operator):
                     nodename = nodedata['nodename']
                     uenodename = nodedata['uenodename']
                     location = nodedata['location']
+                    
                     print(f"{nodename} = create_expression({material.name},{uenodename},{location})")
                     
                 print()
@@ -609,7 +620,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.3.2"
+    bl_label = "TransMat v0.3.3"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
