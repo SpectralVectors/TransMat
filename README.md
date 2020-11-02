@@ -9,7 +9,7 @@ It creates a python file that will instantly, automatically recreate your Blende
 
 Check out the example at the bottom of the page to see what it looks like!
 
-## How to Use
+## How to Install and Use
 
 Download and unzip the file, then, in Blender, click __'Edit'__ > __'Preferences'__ > __'Addons'__ > __'Install'__ and choose __'Transmat.py'__
 
@@ -31,15 +31,15 @@ Be patient if you have a lot of noise nodes and you're baking at a high resoluti
 
 Transmat then checks the output connections of the noise nodes, and replaces them with your newly baked textures!
 
-Now, click the __'Transfer Material!'__ button.
+Now, click the __'Transfer Material!'__ button. This creates your material file - _eg 'GroupTest1_TM.py'_
 
 Then, in Unreal _(with the Python plug-in and Editor Scripting enabled)_ click __'File'__ > __'Execute Python Script'__.
 
-If this is your first time using the addon, navigate to the TransMat folder and select _'TransMat_SetupScript.py'_.
+__NOTE:__ If this is your first time using the addon, navigate to the TransMat folder, select _'TransMat_SetupScript.py'_ and click __'OK'__.
 
-This will setup the custom Mapping and ColorRamp nodes in Unreal. If you've already done this, then just go on to the next step.
+This will setup the custom Mapping and ColorRamp nodes in Unreal. If you've already done this, then:
 
-Navigate to the python file that was just created, and click __'OK'__ - _eg 'yourmaterial_TM.py'_
+Navigate to the python file that was just created, and click __'OK'__ - _eg 'GroupTest1_TM.py'_
 
 Transmat will find and import all the image textures from your Blender material, and plug them into the right nodes!
 
