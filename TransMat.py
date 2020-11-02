@@ -1,4 +1,5 @@
 import bpy
+import os
 import re
 from contextlib import redirect_stdout
 
@@ -6,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 3, 4),
+    'version': (0, 4, 0),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -37,10 +38,16 @@ class TransmatPaths(bpy.types.PropertyGroup):
         default = "Textures"
     )
     
-    noiseresolution: bpy.props.IntProperty(
+    noiseresolution : bpy.props.IntProperty(
         name="Resolution",
         description="Resolution of the baked noise textures",
         default=1024
+    )
+
+    includesetupscript: bpy.props.BoolProperty(
+        name="1st Time Setup",
+        description="An additional script that creates Mapping and ColorRamp nodes, necessary only the first time you use the addon",
+        default=False
     )
 
 ################################################################################
@@ -352,6 +359,7 @@ class TransMatOperator(bpy.types.Operator):
         materialdirectory = context.scene.transmatpaths.materialdirectory
         texturedirectory = context.scene.transmatpaths.texturedirectory
         exportdirectory = context.scene.transmatpaths.exportdirectory
+        includesetupscript = context.scene.transmatpaths.includesetupscript
         
         # Setting groups to False by default
         has_groups = False
@@ -535,6 +543,29 @@ class TransMatOperator(bpy.types.Operator):
             with redirect_stdout(textoutput):
 
                 print("import unreal")
+                
+#                if includesetupscript:
+#                    fileDir = os.path.dirname(os.path.abspath(__file__))
+#                    #print("import os")
+#                    #print("")
+#                    #fileDir = os.path.dirname(os.path.abspath(__file__))
+#                    print("")
+#                    print("files = []")
+#                    print(f"files.append({str(fileDir) + '/BL_Mapping_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp9_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp8_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp7_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp6_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp5_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp4_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp3_MF.py'})")
+#                    print(f"files.append({str(fileDir) + '/BL_ColorRamp2_MF.py'})")
+#                    print("")
+#                    print("execute = unreal.PythonScriptLibrary.execute_python_command")
+#                    print("")
+#                    print("for file in files:")
+#                    print("    execute(file)")
+                    
                 print("")
                 print(f"{material.name}=unreal.AssetToolsHelpers.get_asset_tools().create_asset('{material.name}','/Game/{materialdirectory}', unreal.Material, unreal.MaterialFactoryNew())")
                 print(f"{material.name}.set_editor_property('use_material_attributes',True)")
@@ -620,7 +651,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.3.4"
+    bl_label = "TransMat v0.4.0"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
@@ -660,6 +691,9 @@ class TransMatPanel(bpy.types.Panel):
         box = layout.box()
         column = box.column()
         column.label(text="Translate Material for Unreal", icon='MATERIAL')
+
+#        row = box.row()
+#        row.prop(context.scene.transmatpaths, 'includesetupscript')
         
         row = box.row()
         row.operator("blui.transmat_operator", icon='EXPORT')
