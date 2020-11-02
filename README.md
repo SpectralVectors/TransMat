@@ -1,4 +1,4 @@
-# TransMat v0.3.4
+# TransMat v0.4.0
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 ## Description
@@ -34,6 +34,10 @@ Transmat then checks the output connections of the noise nodes, and replaces the
 Now, click the __'Transfer Material!'__ button.
 
 Then, in Unreal _(with the Python plug-in and Editor Scripting enabled)_ click __'File'__ > __'Execute Python Script'__.
+
+If this is your first time using the addon, navigate to the TransMat folder and select _'TransMat_SetupScript.py'_.
+
+This will setup the custom Mapping and ColorRamp nodes in Unreal. If you've already done this, then just go on to the next step.
 
 Navigate to the python file that was just created, and click __'OK'__ - _eg 'yourmaterial_TM.py'_
 
@@ -218,6 +222,8 @@ angjminer's Project BlUEMan demonstrated a similar functionality a few years ago
 Jim Kroovy submitted a crash fix, and a refactoring suggestion.
 
 Momchilo has pitched in with some licensing resources.
+
+PGMath posted an article on blender.stackexchange on how to recreate the Mapping and ColorRamp nodes using simple Math nodes, a huge help!
 
 And a massive thanks to batFINGER, CodeManX, and sambler for their countless contributions over the years to blender.stackexchange!
 
