@@ -13,13 +13,9 @@ mat_func_combine = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions
 ### Creating Nodes
 Math12 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-1060.0, 3200.0)
 Math15 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionDivide,-900.0, 3200.0)
-Color1 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1580.0, 3880.0)
-Position1 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1580.0, 3800.0)
 Mix = create_expression(BL_ColorRamp9,unreal.MaterialExpressionLinearInterpolate,-340.0, 3620.0)
 Math16 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-740.0, 3220.0)
 Math17 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionAdd,-580.0, 3280.0)
-Position0 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1580.0, 3540.0)
-Color0 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1580.0, 3620.0)
 Math14 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionDivide,-880.0, 3380.0)
 Math13 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-1040.0, 3520.0)
 Reroute01 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1840.0, 3360.0)
@@ -27,9 +23,7 @@ Math20 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionDivide,-640.0,
 Math19 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-800.0, 4415.648193359375)
 Math18 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-800.0, 4235.648193359375)
 Math21 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionDivide,-640.0, 4235.648193359375)
-Color2 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1560.0, 4620.0)
 Mix01 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionLinearInterpolate,-20.0, 4480.0)
-Position2 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1560.0, 4540.0)
 Math22 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-480.0, 4260.0)
 Reroute10 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1120.0, 4360.0)
 Reroute09 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1120.0, 4360.0)
@@ -46,10 +40,8 @@ Math25 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-280.
 Math27 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-600.0, 5195.648193359375)
 Math28 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-600.0, 5015.648193359375)
 Math29 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionDivide,-440.0, 5015.648193359375)
-Color3 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1360.0, 5400.0)
 Math26 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionDivide,-440.0, 5195.648193359375)
 Mix02 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionLinearInterpolate,100.0, 5180.0)
-Position3 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1360.0, 5320.0)
 Mix03 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionLinearInterpolate,180.0, 6020.0)
 Math30 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionAdd,-120.0, 5840.0)
 Math31 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-280.0, 5800.0)
@@ -61,8 +53,6 @@ Reroute11 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-18
 Reroute14 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1020.0, 5880.0)
 Reroute13 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1020.0, 5880.0)
 Reroute12 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1020.0, 5880.0)
-Color4 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1360.0, 6160.0)
-Position4 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1360.0, 6080.0)
 Math36 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionAdd,-120.0, 6600.0)
 Math37 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-280.0, 6560.0)
 Math38 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-600.0, 6715.6484375)
@@ -74,8 +64,6 @@ Reroute18 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-10
 Reroute17 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1040.0, 6640.0)
 Reroute16 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1040.0, 6640.0)
 Mix04 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionLinearInterpolate,160.0, 6780.0)
-Color5 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1360.0, 6920.0)
-Position5 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1360.0, 6840.0)
 Math42 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionAdd,-120.0, 7340.0)
 Math43 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-280.0, 7300.0)
 Math44 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-600.0, 7455.6484375)
@@ -87,8 +75,6 @@ Reroute19 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-18
 Reroute22 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1020.0, 7380.0)
 Reroute21 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1020.0, 7380.0)
 Reroute20 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1020.0, 7380.0)
-Color6 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1360.0, 7660.0)
-Position6 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1360.0, 7580.0)
 Math48 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionAdd,-120.0, 8060.0)
 Math49 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-280.0, 8020.0)
 Math50 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-600.0, 8175.6484375)
@@ -100,8 +86,6 @@ Reroute25 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-10
 Reroute24 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1080.0, 8080.0)
 Reroute23 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1849.2108154296875, 8140.0)
 Mix06 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionLinearInterpolate,180.0, 8240.0)
-Color7 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1360.0, 8380.0)
-Position7 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant,-1360.0, 8300.0)
 Math54 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionAdd,-120.0, 8780.0)
 Math55 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionMultiply,-280.0, 8740.0)
 Math56 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionSubtract,-600.0, 8895.6484375)
@@ -112,36 +96,137 @@ Reroute27 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-18
 Reroute30 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1140.0, 8820.0)
 Reroute29 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1140.0, 8820.0)
 Reroute28 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionReroute,-1140.0, 8820.0)
-Mix07 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionLinearInterpolate,180.0, 8960.0)
-Color8 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionConstant3Vector,-1360.0, 9100.0)
-Position8 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionConstant, -1360.0, 9020.0)
+Mix07 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionLinearInterpolate, 180.0, 8960.0)
+
+Position0 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1580.0, 3540.0)
+Color0 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1580.0, 3620.0)
+
+Position1 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1580.0, 3800.0)
+Color1 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1580.0, 3880.0)
+
+Position2 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1560.0, 4540.0)
+Color2 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1560.0, 4620.0)
+
+Position3 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1360.0, 5320.0)
+Color3 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1360.0, 5400.0)
+
+Color4 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 6160.0)
+Position4 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 6080.0)
+
+Color5 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 6920.0)
+Position5 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 6840.0)
+
+Color6 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 7660.0)
+Position6 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 7580.0)
+
+Color7 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 8380.0)
+Position7 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 8300.0)
+
+Color8 = create_expression(BL_ColorRamp9,unreal.MaterialExpressionFunctionInput,-1360.0, 9100.0)
+Position8 = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -1360.0, 9020.0)
 
 Factor = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionInput, -2200.0, 3320.0)
-Factor.input_name = 'Factor'
-Factor.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
-OutputResult = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionOutput,400, 8960)
+
+OutputResult = create_expression(BL_ColorRamp9, unreal.MaterialExpressionFunctionOutput,400, 6020)
 
 ### Loading Material Functions and Textures
 
 ### Setting Values
-Color0.constant = (0.0, 0.0, 0.0)
-Position0.r = 0.0
-Color1.constant = (1.0, 0.01521005667746067, 0.0)
-Position1.r = 0.125
-Color2.constant = (1.0, 0.16482490301132202, 0.0)
-Position2.r = 0.25
-Color3.constant = (1.0, 0.9584746956825256, 0.0)
-Position3.r = 0.375
-Color4.constant = (0.0, 1.0, 0.011045901104807854)
-Position4.r = 0.5
-Color5.constant = (0.0, 1.0, 1.0)
-Position5.r = 0.625
-Color6.constant = (0.00011138489207951352, 0.0, 1.0)
-Position6.r = 0.75
-Color7.constant = (1.0, 0.0, 0.8237789869308472)
-Position7.r = 0.875
-Color8.constant = (1.0, 1.0, 1.0)
-Position8.r = 1.0
+Color0.input_name = 'Color0'
+Color0.sort_priority = 0
+Color0.preview_value = (0.0, 0.0, 0.0, 1.0)
+Color0.use_preview_value_as_default = True
+Position0.input_name = 'Position0'
+Position0.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position0.sort_priority = 1
+Position0.preview_value = (0.0, 0.0, 0.0, 1.0)
+Position0.use_preview_value_as_default = True
+
+Color1.input_name = 'Color1'
+Color1.sort_priority = 2
+Color1.preview_value = (1.0, 0.0, 0.0, 1.0)
+Color1.use_preview_value_as_default = True
+Position1.input_name = "Position1"
+Position1.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position1.sort_priority = 3
+Position1.preview_value = (0.125, 0, 0, 1)
+Position1.use_preview_value_as_default = True
+
+Color2.input_name = 'Color2'
+Color2.sort_priority = 4
+Color2.preview_value = (1.0, 0.5, 0.0, 1)
+Color2.use_preview_value_as_default = True
+Position2.input_name = "Position2"
+Position2.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position2.sort_priority = 5
+Position2.preview_value = (0.250, 0, 0, 1)
+Position2.use_preview_value_as_default = True
+
+Color3.input_name = 'Color3'
+Color3.sort_priority = 6
+Color3.preview_value = (1.0, 1, 0.0, 1)
+Color3.use_preview_value_as_default = True
+Position3.input_name = "Position3"
+Position3.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position3.sort_priority = 7
+Position3.preview_value = (0.375, 0, 0, 1)
+Position3.use_preview_value_as_default = True
+
+Color4.input_name = 'Color4'
+Color4.sort_priority = 8
+Color4.preview_value = (0, 1, 0.0, 1)
+Color4.use_preview_value_as_default = True
+Position4.input_name = "Position4"
+Position4.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position4.sort_priority = 9
+Position4.preview_value = (0.5, 0, 0, 1)
+Position4.use_preview_value_as_default = True
+
+Color5.input_name = 'Color5'
+Color5.sort_priority = 10
+Color5.preview_value = (0, 1, 1, 1)
+Color5.use_preview_value_as_default = True
+Position5.input_name = "Position5"
+Position5.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position5.sort_priority = 11
+Position5.preview_value = (0.625, 0, 0, 1)
+Position5.use_preview_value_as_default = True
+
+Color6.input_name = 'Color6'
+Color6.sort_priority = 12
+Color6.preview_value = (0, 0, 1, 1)
+Color6.use_preview_value_as_default = True
+Position6.input_name = "Position6"
+Position6.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position6.sort_priority = 13
+Position6.preview_value = (0.75, 0, 0, 1)
+Position6.use_preview_value_as_default = True
+
+Color7.input_name = 'Color7'
+Color7.sort_priority = 14
+Color7.preview_value = (1, 0, 1, 1)
+Color7.use_preview_value_as_default = True
+Position7.input_name = "Position7"
+Position7.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position7.sort_priority = 15
+Position7.preview_value = (0.875, 0, 0, 1)
+Position7.use_preview_value_as_default = True
+
+Color8.input_name = 'Color8'
+Color8.sort_priority = 16
+Color8.preview_value = (1, 1, 1, 1)
+Color8.use_preview_value_as_default = True
+Position8.input_name = "Position8"
+Position8.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Position8.sort_priority = 17
+Position8.preview_value = (1, 0, 0, 1)
+Position8.use_preview_value_as_default = True
+
+Factor.input_name = 'Factor'
+Factor.input_type = unreal.FunctionInputType.FUNCTION_INPUT_SCALAR
+Factor.sort_priority = 18
+Factor.preview_value = (0.0, 0.0, 0.0, 1.0)
+Factor.use_preview_value_as_default = True
 
 ### Creating Connections
 Math12_connection = create_connection(Math12, '', Math15, 'B')
