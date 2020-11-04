@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 4, 1),
+    'version': (0, 4, 2),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -42,12 +42,6 @@ class TransmatPaths(bpy.types.PropertyGroup):
         name="Resolution",
         description="Resolution of the baked noise textures",
         default=1024
-    )
-
-    includesetupscript: bpy.props.BoolProperty(
-        name="1st Time Setup",
-        description="An additional script that creates Mapping and ColorRamp nodes, necessary only the first time you use the addon",
-        default=False
     )
 
 ################################################################################
@@ -298,7 +292,15 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeCombineRGB":{"Image":"Result","R":"X","G":"Y","B":"Z"},
         "ShaderNodeCombineXYZ":{"Vector":"Result","X":"X","Y":"Y","Z":"Z"},
         "ShaderNodeCombineHSV":{"Image":"Result","H":"X","S":"Y","V":"Z"},
-        "ShaderNodeValToRGB":{"Fac":"Factor","Color":"","Alpha":""},
+        # ShaderNodeValToRGB AKA ColorRamp - keyed based on number of colors used
+        "2":{"Fac":"Factor","Color":"Result","Alpha":""},
+        "3":{"Fac":"Factor","Color":"Result","Alpha":""},
+        "4":{"Fac":"Factor","Color":"Result","Alpha":""},
+        "5":{"Fac":"Factor","Color":"Result","Alpha":""},
+        "6":{"Fac":"Factor","Color":"Result","Alpha":""},
+        "7":{"Fac":"Factor","Color":"Result","Alpha":""},
+        "8":{"Fac":"Factor","Color":"Result","Alpha":""},
+        "9":{"Fac":"Factor","Color":"Result","Alpha":""},
         "ShaderNodeMapping":{"Vector":"VectorInput","Location":"Location","Rotation":"Rotation","Scale":"Scale"},
         "ShaderNodeTexImage":{"Vector":"UVs","Color":"RGB"},
         "ShaderNodeFresnel":{"Fac":""},
@@ -374,7 +376,6 @@ class TransMatOperator(bpy.types.Operator):
         materialdirectory = context.scene.transmatpaths.materialdirectory
         texturedirectory = context.scene.transmatpaths.texturedirectory
         exportdirectory = context.scene.transmatpaths.exportdirectory
-        includesetupscript = context.scene.transmatpaths.includesetupscript
         
         # Setting groups to False by default
         has_groups = False
@@ -430,9 +431,9 @@ class TransMatOperator(bpy.types.Operator):
             if node.bl_idname == 'ShaderNodeMath' or node.bl_idname == 'ShaderNodeVectorMath':
                 nodedata['uenodename'] = node_translate[node.operation]
                 nodedata['ID'] = node.operation
-#            if node.bl_idname == 'ShaderNodeValToRGB':
-#                nodedata['uenodename'] = node_translate[node.bl_idname]
-#                nodedata['ID'] = len(node.color_ramp.elements)    
+            if node.bl_idname == 'ShaderNodeValToRGB':
+                nodedata['uenodename'] = node_translate[node.bl_idname]
+                nodedata['ID'] = str(len(node.color_ramp.elements))    
             if not node.bl_idname == 'ShaderNodeMixRGB' and not node.bl_idname == 'ShaderNodeMath' and not node.bl_idname == 'ShaderNodeVectorMath':
                 nodedata['uenodename'] = node_translate[node.bl_idname]
                 nodedata['ID'] = node.bl_idname
@@ -490,17 +491,22 @@ class TransMatOperator(bpy.types.Operator):
                 rgb_output = str(output_name + " = " + "(" + output_value_0 + ", " + output_value_1 + ", " + output_value_2 + ")")
                 nodedata['values'].append(rgb_output)
                 
-#            if node.bl_idname == 'ShaderNodeValToRGB':
-#                elements = []
-#                for element,i in node.color_ramp.elements:
-#                    index = i
-#                    position = element.position
-#                    color = element.color
-#                    i += 1
-                
+            if node.bl_idname == 'ShaderNodeValToRGB':
+                nodedata['ID'] = str(len(node.color_ramp.elements))
+                ID = nodedata['ID']
+                elements = []
+                index = -1
+                for element in node.color_ramp.elements:
+                    index += 1
+                    position = element.position
+                    color = element.color
+                    colorsetting = str(f"#{nodename}.Color{index}.preview_value = ({color[0]}, {color[1]}, {color[2]}, 1)")
+                    nodedata['values'].append(colorsetting)
+                    positionsetting = str(f"#{nodename}.Position{index}.preview_value = ({position}, 0, 0, 1)")
+                    nodedata['values'].append(positionsetting)                
                 
             # Material Functions and Textures - load_data
-            if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV":
+            if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV" or node.bl_idname == 'ShaderNodeValToRGB':
                 mat_func = str(f"{nodename}.set_editor_property('material_function',{material_function[ID]})")    
                 nodedata['load_data'].append(mat_func)
                
@@ -662,7 +668,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.4.1"
+    bl_label = "TransMat v0.4.2"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
@@ -716,11 +722,11 @@ def register():
     bpy.utils.register_class(BakeNoises)
 
 def unregister():
-    bpy.utils.unregister_class(TransMatPanel)
-    bpy.utils.unregister_class(TransMatOperator)
-    bpy.utils.unregister_class(TransmatPaths)
-    del bpy.types.Scene.transmatpaths
     bpy.utils.unregister_class(BakeNoises)
+    del bpy.types.Scene.transmatpaths
+    bpy.utils.unregister_class(TransmatPaths)
+    bpy.utils.unregister_class(TransMatOperator)
+    bpy.utils.unregister_class(TransMatPanel)
     
 if __name__ == "__main__":
     register()
