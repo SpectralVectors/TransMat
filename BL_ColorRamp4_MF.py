@@ -1,6 +1,8 @@
 import unreal
 
-BL_ColorRamp4 = unreal.AssetToolsHelpers.get_asset_tools().create_asset('BL_ColorRamp4','/Engine/Functions/BLUI/', unreal.MaterialFunction, unreal.MaterialFunctionFactoryNew())
+BL_ColorRamp4 = unreal.AssetToolsHelpers.get_asset_tools().create_asset('BL_ColorRamp4', '/Engine/Functions/BLUI/', unreal.MaterialFunction, unreal.MaterialFunctionFactoryNew())
+BL_ColorRamp4.set_editor_property("expose_to_library", True)
+BL_ColorRamp4.set_editor_property("library_categories_text", ("BLUI", "Custom", "Utility"))
 
 create_expression = unreal.MaterialEditingLibrary.create_material_expression_in_function
 create_connection = unreal.MaterialEditingLibrary.connect_material_expressions
