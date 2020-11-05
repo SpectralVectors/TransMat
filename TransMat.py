@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 5, 0),
+    'version': (0, 5, 1),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -449,33 +449,40 @@ class TransMatOperator(bpy.types.Operator):
             nodename = nodedata['nodename']
             
             # Input Values - disabled for now, but could be reimplememnted by adding and attaching value, RGB nodes in place of directly setting values
-            
-#                for input in node.inputs:
-#                    if not input.bl_idname == 'NodeSocketShader':
-#                        if not input.is_linked:
-#                                
-#                            if input.type == 'VECTOR':
-#                                input_name = str(f"{nodename}.{socket_translate[ID][input.name]}")
-#                                input_value_0 = str(input.default_value[0])
-#                                input_value_1 = str(input.default_value[1])
-#                                input_value_2 = str(input.default_value[2])
-#                                vector_input = str(input_name + " = " + "(" + input_value_0 + ", " + input_value_1 + ", " + input_value_2 + ")")
-#                                nodedata['values'].append(vector_input)
-#                                
-#                            if input.type == 'RGBA':
-#                                input_name = str(f"{nodename}.{socket_translate[ID][input.name]}")
-#                                input_value_0 = str(input.default_value[0])
-#                                input_value_1 = str(input.default_value[1])
-#                                input_value_2 = str(input.default_value[2])
-#                                input_value_3 = str(input.default_value[3])
-#                                rgba_input = str(input_name + " = " + "(" + input_value_0 + ", " + input_value_1 + ", " + input_value_2 + ", " + input_value_3 + ")")
-#                                nodedata['values'].append(rgba_input)
-#                                    
-#                            if not input.type == 'VECTOR' and not input.type == 'RGBA' and not input.default_value == 0:
-#                                input_name = str(f"{nodename}.{socket_translate[ID][input.name]}")
-#                                input_value = str(input.default_value)
-#                                other_input = str(input_name + " = " + input_value)
-#                                nodedata['values'].append(other_input)
+            if node.bl_idname == 'ShaderNodeBsdfPrincipled':
+                offset = 1200
+                for input in node.inputs:
+                    if not input.bl_idname == 'NodeSocketShader':
+                        if not input.is_linked:
+    #                                
+    #                            if input.type == 'VECTOR':
+    #                                input_name = str(f"{nodename}.{socket_translate[ID][input.name]}")
+    #                                input_value_0 = str(input.default_value[0])
+    #                                input_value_1 = str(input.default_value[1])
+    #                                input_value_2 = str(input.default_value[2])
+    #                                vector_input = str(input_name + " = " + "(" + input_value_0 + ", " + input_value_1 + ", " + input_value_2 + ")")
+    #                                nodedata['values'].append(vector_input)
+    #                                
+    #                            if input.type == 'RGBA':
+    #                                input_name = str(f"{nodename}.{socket_translate[ID][input.name]}")
+    #                                input_value_0 = str(input.default_value[0])
+    #                                input_value_1 = str(input.default_value[1])
+    #                                input_value_2 = str(input.default_value[2])
+    #                                input_value_3 = str(input.default_value[3])
+    #                                rgba_input = str(input_name + " = " + "(" + input_value_0 + ", " + input_value_1 + ", " + input_value_2 + ", " + input_value_3 + ")")
+    #                                nodedata['values'].append(rgba_input)
+    #                                    
+    #                        if not input.type == 'VECTOR' and not input.type == 'RGBA' and not input.default_value == 0:
+    #                                input_name = str(f"{nodename}.{socket_translate[ID][input.name]}")
+    #                                input_value = str(input.default_value)
+    #                                other_input = str(input_name + " = " + input_value)
+    #                                nodedata['values'].append(other_input)
+                            if input.type == 'VALUE' and not input.default_value == 0:
+                                nodedata['pln_location'] = str(f"{node.location[0] - 1750}, {node.location[1] *-1 + offset})")
+                                nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant, {nodedata['pln_location']}") )
+                                nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.r = {input.default_value}") )
+                                nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
+                                offset += 140
             
             # Output Values are gathered for Value and RGB nodes - values
             # When making connections, Unreal requires upper case, but when
@@ -506,13 +513,13 @@ class TransMatOperator(bpy.types.Operator):
                     position = element.position
                     color = element.color
                     # Post Load Nodes - RGB
-                    nodedata['pln_location'] = str(f"{node.location[0] - 2000}, {node.location[1] *-1 + offset})")
+                    nodedata['pln_location'] = str(f"{node.location[0] - 1800}, {node.location[1] *-1 + offset})")
                     nodedata['pln_create'].append( str(f"{nodename}Color{index} = create_expression({material.name}, unreal.MaterialExpressionConstant3Vector, {nodedata['pln_location']}") )
                     nodedata['pln_values'].append( str(f"{nodename}Color{index}.constant = ({color[0]}, {color[1]}, {color[2]})") )
                     nodedata['pln_connections'].append( str(f"{nodename}Color{index}_connection = create_connection({nodename}Color{index}, '', {nodename}, 'Color{index}')") )
                     offset += 140
                     # Post Load Nodes - Value
-                    nodedata['pln_location'] = str(f"{node.location[0] - 2000}, {node.location[1] *-1 + offset})")
+                    nodedata['pln_location'] = str(f"{node.location[0] - 1800}, {node.location[1] *-1 + offset})")
                     nodedata['pln_create'].append( str(f"{nodename}Position{index} = create_expression({material.name}, unreal.MaterialExpressionConstant, {nodedata['pln_location']}") )
                     nodedata['pln_values'].append( str(f"{nodename}Position{index}.r = {position}") )
                     nodedata['pln_connections'].append( str(f"{nodename}Position{index}_connection = create_connection({nodename}Position{index}, '', {nodename}, 'Position{index}')") )                
@@ -699,7 +706,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.5.0"
+    bl_label = "TransMat v0.5.1"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
