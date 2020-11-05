@@ -1,4 +1,4 @@
-# TransMat v0.5.2
+# TransMat v0.5.3
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 ## Description
@@ -11,15 +11,15 @@ Check out the example at the bottom of the page to see what it looks like!
 
 ## How to Install and Use
 
-Download and unzip the file, then, in Blender, click __'Edit'__ > __'Preferences'__ > __'Addons'__ > __'Install'__ and choose __'Transmat.py'__
+Download and unzip the file, then, in __Blender__, click __'Edit'__ > __'Preferences'__ > __'Addons'__ > __'Install'__ and choose __'Transmat.py'__
 
-This will add a properties panel to the Node Editor.
+This will add a properties panel to the __Node Editor__.
 
 Once you have created your material, choose a directory to output the python file to.
 
 Then, if you wish, you can specify Unreal import subfolders for the material and textures to be placed in.
 
-If you do not specify any folders, they will go to your game's Content folder by default.
+If you do not specify any folders, they will go to your game's __Content__ folder by default.
 
 If you do add a subfolder, the script will either find it, if it exists, or create it, if it doesn't.
 
@@ -33,7 +33,7 @@ Transmat then checks the output connections of the noise nodes, and replaces the
 
 Now, click the __'Transfer Material!'__ button. This creates your material file - _eg 'GroupTest1_TM.py'_
 
-Then, in Unreal _(with the Python plug-in and Editor Scripting enabled)_ click __'File'__ > __'Execute Python Script'__.
+Then, in __Unreal__ _(with the Python plug-in and Editor Scripting enabled)_ click __'File'__ > __'Execute Python Script'__.
 
 __NOTE:__ If this is your first time using the addon, navigate to the TransMat folder, select _'TransMat_SetupScript.py'_ and click __'OK'__.
 
@@ -58,6 +58,8 @@ Transmat will find and import all the image textures from your Blender material,
 - __Mix Shader   =>__   BlendMaterialAttributes
 
 - __Add Shader  =>__   Add
+
+- __Color Ramp  =>__  FunctionCall - BL_ColorRamp - supports up to 9 colors (a little buggy right now)
 
 - __Invert  =>__   OneMinus
 
@@ -206,6 +208,10 @@ If you use a node that is not on the supported list, your material will likely n
 Some very common Blender nodes are not yet supported and it will take time to figure out the proper Unreal equivalent for all of Blender's Nodes.
 
 It redirects stdout to create the python file, so if you are printing to the console, it will interfere with the script.
+
+Color Ramps are supported, but above 4 colours they start to produce unexpected results, with colour banding and other issues.
+
+This can sometimes be resolved by ensuring the position of the first colour is 0, and the position of the last colour is 1.
 
 ## Acknowledgements and Thanks
 
