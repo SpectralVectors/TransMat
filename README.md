@@ -171,7 +171,7 @@ Transmat will find and import all the image textures from your Blender material,
 
 Anything NOT in the above list can be considered unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials, those are explicitly stated below.
 
-- Color Ramp - __Coming Soon!__
+- Color Ramp - __Partial Support - may be buggy__
 
 - Mapping - __Coming Soon!__
 
