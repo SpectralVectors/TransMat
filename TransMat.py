@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 5, 2),
+    'version': (0, 5, 3),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -455,12 +455,12 @@ class TransMatOperator(bpy.types.Operator):
                     if not input.bl_idname == 'NodeSocketShader':
                         if not input.is_linked:
                  
-                            if input.type == 'VECTOR':
-                                nodedata['pln_location'] = str(f"{node.location[0] - 1750}, {node.location[1] *-1 + offset})")
-                                nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant3Vector, {nodedata['pln_location']}") )
-                                nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.constant = ({input.default_value[0]}, {input.default_value[1]}, {input.default_value[2]})") )
-                                nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
-                                offset += 140
+#                            if input.type == 'VECTOR':
+#                                nodedata['pln_location'] = str(f"{node.location[0] - 1750}, {node.location[1] *-1 + offset})")
+#                                nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant3Vector, {nodedata['pln_location']}") )
+#                                nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.constant = ({input.default_value[0]}, {input.default_value[1]}, {input.default_value[2]})") )
+#                                nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
+#                                offset += 140
              
                             if input.type == 'RGBA':
                                 nodedata['pln_location'] = str(f"{node.location[0] - 1750}, {node.location[1] *-1 + offset})")
@@ -474,7 +474,7 @@ class TransMatOperator(bpy.types.Operator):
                                 nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant, {nodedata['pln_location']}") )
                                 nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.r = {input.default_value}") )
                                 nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
-                                offset += 140
+                                offset += 60
             
             # Output Values are gathered for Value and RGB nodes - values
             # When making connections, Unreal requires upper case, but when
@@ -515,7 +515,7 @@ class TransMatOperator(bpy.types.Operator):
                     nodedata['pln_create'].append( str(f"{nodename}Position{index} = create_expression({material.name}, unreal.MaterialExpressionConstant, {nodedata['pln_location']}") )
                     nodedata['pln_values'].append( str(f"{nodename}Position{index}.r = {position}") )
                     nodedata['pln_connections'].append( str(f"{nodename}Position{index}_connection = create_connection({nodename}Position{index}, '', {nodename}, 'Position{index}')") )                
-                    offset += 140
+                    offset += 60
                     
             # Material Functions and Textures - load_data
             if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV" or node.bl_idname == 'ShaderNodeValToRGB':
@@ -698,7 +698,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.5.2"
+    bl_label = "TransMat v0.5.3"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
