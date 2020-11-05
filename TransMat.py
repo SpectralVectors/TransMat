@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 4, 2),
+    'version': (0, 5, 0),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -416,6 +416,9 @@ class TransMatOperator(bpy.types.Operator):
             'load_data' : [],
             'values' : [],
             'connections' : [],
+            'pln_create': [],
+            'pln_values': [],
+            'pln_connections': [],
             }
             
             # Gathering and formatting our basic node information - nodename,uenodename,location
@@ -491,20 +494,30 @@ class TransMatOperator(bpy.types.Operator):
                 rgb_output = str(output_name + " = " + "(" + output_value_0 + ", " + output_value_1 + ", " + output_value_2 + ")")
                 nodedata['values'].append(rgb_output)
                 
+            # ColorRamp uses Post Load Nodes to transfer settings to Unreal    
             if node.bl_idname == 'ShaderNodeValToRGB':
                 nodedata['ID'] = str(len(node.color_ramp.elements))
                 ID = nodedata['ID']
                 elements = []
                 index = -1
+                offset = 1200
                 for element in node.color_ramp.elements:
                     index += 1
                     position = element.position
                     color = element.color
-                    colorsetting = str(f"#{nodename}.Color{index}.preview_value = ({color[0]}, {color[1]}, {color[2]}, 1)")
-                    nodedata['values'].append(colorsetting)
-                    positionsetting = str(f"#{nodename}.Position{index}.preview_value = ({position}, 0, 0, 1)")
-                    nodedata['values'].append(positionsetting)                
-                
+                    # Post Load Nodes - RGB
+                    nodedata['pln_location'] = str(f"{node.location[0] - 2000}, {node.location[1] *-1 + offset})")
+                    nodedata['pln_create'].append( str(f"{nodename}Color{index} = create_expression({material.name}, unreal.MaterialExpressionConstant3Vector, {nodedata['pln_location']}") )
+                    nodedata['pln_values'].append( str(f"{nodename}Color{index}.constant = ({color[0]}, {color[1]}, {color[2]})") )
+                    nodedata['pln_connections'].append( str(f"{nodename}Color{index}_connection = create_connection({nodename}Color{index}, '', {nodename}, 'Color{index}')") )
+                    offset += 140
+                    # Post Load Nodes - Value
+                    nodedata['pln_location'] = str(f"{node.location[0] - 2000}, {node.location[1] *-1 + offset})")
+                    nodedata['pln_create'].append( str(f"{nodename}Position{index} = create_expression({material.name}, unreal.MaterialExpressionConstant, {nodedata['pln_location']}") )
+                    nodedata['pln_values'].append( str(f"{nodename}Position{index}.r = {position}") )
+                    nodedata['pln_connections'].append( str(f"{nodename}Position{index}_connection = create_connection({nodename}Position{index}, '', {nodename}, 'Position{index}')") )                
+                    offset += 140
+                    
             # Material Functions and Textures - load_data
             if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV" or node.bl_idname == 'ShaderNodeValToRGB':
                 mat_func = str(f"{nodename}.set_editor_property('material_function',{material_function[ID]})")    
@@ -657,6 +670,24 @@ class TransMatOperator(bpy.types.Operator):
                 for nodedata in uenodes:
                     for connection in nodedata['connections']:    
                         print(connection)
+                        
+                print()
+                print("### Create Post Load Nodes")
+                for nodedata in uenodes:
+                    for pln_create in nodedata['pln_create']:    
+                        print(pln_create)
+                        
+                print()
+                print("### Set Post Load Node Values")
+                for nodedata in uenodes:
+                    for pln_value in nodedata['pln_values']:    
+                        print(pln_value)
+                        
+                print()
+                print("### Creating Post Load Node Connections")
+                for nodedata in uenodes:
+                    for pln_connection in nodedata['pln_connections']:    
+                        print(pln_connection)
             
         if has_groups:
             bpy.ops.ed.undo()                                
@@ -668,7 +699,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.4.2"
+    bl_label = "TransMat v0.5.0"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
