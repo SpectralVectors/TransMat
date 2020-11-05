@@ -1,4 +1,4 @@
-# TransMat v0.5.1
+# TransMat v0.5.2
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 ## Description
@@ -206,8 +206,6 @@ If you use a node that is not on the supported list, your material will likely n
 Some very common Blender nodes are not yet supported and it will take time to figure out the proper Unreal equivalent for all of Blender's Nodes.
 
 It redirects stdout to create the python file, so if you are printing to the console, it will interfere with the script.
-
-Numeric values that you enter on the Principled BSDF will transfer (eg Metallic, Specular), but RGB values do not yet transfer automatically.
 
 ## Acknowledgements and Thanks
 
