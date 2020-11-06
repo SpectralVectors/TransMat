@@ -1,4 +1,4 @@
-# TransMat v0.5.3
+# TransMat v0.6.0
 Transport, Translate, Transform, Transfer Blender Materials to Unreal
 
 ## Description
@@ -54,6 +54,8 @@ Transmat will find and import all the image textures from your Blender material,
 - __Texture Coordinate   =>__  TextureCoordinate
 
 - __UV Map   =>__  TextureCoordinate
+
+- __Mapping   =>__  FunctionCall - BL_Mapping - (see limitations)
 
 - __Mix Shader   =>__   BlendMaterialAttributes
 
@@ -173,10 +175,6 @@ Transmat will find and import all the image textures from your Blender material,
 
 Anything NOT in the above list can be considered unsupported, however, there are some common Blender nodes that do not currently have support that are likely to be in many materials, those are explicitly stated below.
 
-- Color Ramp - __Partial Support - may be buggy__
-
-- Mapping - __Coming Soon!__
-
 - Normal
 
 - Bump
@@ -200,6 +198,8 @@ If a node is in the unsupported list, it doesn't mean it won't be supported, onl
 I'm planning on first getting all the nodes that have direct equivalents sorted out, then looking at nodes that require custom coded solutions.
 
 ## Limitations
+
+Blender's Mapping node uses a 3D system, but as Unreal's TexCoord node is 2D, it had to be modified. How big a difference that will make remains to be seen.
 
 Node groups work with the __'Transfer Material'__ function, but, for now, in order to bake textures in Groups, the groups must be broken.
 
