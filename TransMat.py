@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 5, 3),
+    'version': (0, 6, 0),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -311,10 +311,10 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeInvert":{"":""},
         "ShaderNodeTexCoord":{"":""},
         # Math Node Operations
-        "ADD":{"0":"A","1":"B", "Scale":"","Value":""},
-        "SUBTRACT":{"0":"A","1":"B","Value":""},
-        "MULTIPLY":{"0":"A","1":"B","Value":""},
-        "DIVIDE":{"0":"A","1":"B","Value":""},
+        "ADD":{"0":"A","1":"B", "Scale":"","Value":"", "Vector":""},
+        "SUBTRACT":{"0":"A","1":"B","Value":"", "Vector":""},
+        "MULTIPLY":{"0":"A","1":"B","Value":"", "Vector":""},
+        "DIVIDE":{"0":"A","1":"B","Value":"", "Vector":""},
         "SINE":{"0":"","Value":""},
         "ARCSINE":{"0":"","Value":""},
         "COSINE":{"0":"","Value":""},
@@ -454,27 +454,33 @@ class TransMatOperator(bpy.types.Operator):
                 for input in node.inputs:
                     if not input.bl_idname == 'NodeSocketShader':
                         if not input.is_linked:
-                 
-#                            if input.type == 'VECTOR':
-#                                nodedata['pln_location'] = str(f"{node.location[0] - 1750}, {node.location[1] *-1 + offset})")
-#                                nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant3Vector, {nodedata['pln_location']}") )
-#                                nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.constant = ({input.default_value[0]}, {input.default_value[1]}, {input.default_value[2]})") )
-#                                nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
-#                                offset += 140
              
                             if input.type == 'RGBA':
-                                nodedata['pln_location'] = str(f"{node.location[0] - 1750}, {node.location[1] *-1 + offset})")
+                                nodedata['pln_location'] = str(f"{node.location[0] - 1800}, {node.location[1] *-1 + offset})")
                                 nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant4Vector, {nodedata['pln_location']}") )
                                 nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.constant = ({input.default_value[0]}, {input.default_value[1]}, {input.default_value[2]}, {input.default_value[3]})") )
                                 nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
                                 offset += 140
 
                             if input.type == 'VALUE' and not input.default_value == 0 and not input.name == 'IOR':
-                                nodedata['pln_location'] = str(f"{node.location[0] - 1750}, {node.location[1] *-1 + offset})")
+                                nodedata['pln_location'] = str(f"{node.location[0] - 1800}, {node.location[1] *-1 + offset})")
                                 nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant, {nodedata['pln_location']}") )
                                 nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.r = {input.default_value}") )
                                 nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
                                 offset += 60
+                                
+            if node.bl_idname == 'ShaderNodeMapping':
+                offset = 1200
+                for input in node.inputs:
+                    if not input.bl_idname == 'NodeSocketShader':
+                        if not input.is_linked:
+                 
+                            if input.type == 'VECTOR':
+                                nodedata['pln_location'] = str(f"{node.location[0] - 1800}, {node.location[1] *-1 + offset})")
+                                nodedata['pln_create'].append( str(f"{nodename}{socket_translate[ID][input.name]} = create_expression({material.name}, unreal.MaterialExpressionConstant3Vector, {nodedata['pln_location']}") )
+                                nodedata['pln_values'].append( str(f"{nodename}{socket_translate[ID][input.name]}.constant = ({input.default_value[0]}, {input.default_value[1]}, {input.default_value[2]})") )
+                                nodedata['pln_connections'].append( str(f"{nodename}{socket_translate[ID][input.name]}_connection = create_connection({nodename}{socket_translate[ID][input.name]}, '', {nodename}, '{socket_translate[ID][input.name]}')") )                
+                                offset += 140
             
             # Output Values are gathered for Value and RGB nodes - values
             # When making connections, Unreal requires upper case, but when
@@ -518,7 +524,7 @@ class TransMatOperator(bpy.types.Operator):
                     offset += 60
                     
             # Material Functions and Textures - load_data
-            if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV" or node.bl_idname == 'ShaderNodeValToRGB':
+            if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV" or node.bl_idname == 'ShaderNodeValToRGB' or node.bl_idname == 'ShaderNodeMapping':
                 mat_func = str(f"{nodename}.set_editor_property('material_function',{material_function[ID]})")    
                 nodedata['load_data'].append(mat_func)
                
@@ -540,7 +546,7 @@ class TransMatOperator(bpy.types.Operator):
                             nodename = nodedata['nodename']
                             from_node = str(link.from_node.name).replace('.0','').replace(' ','')
                             
-                            if link.from_node.bl_idname == 'ShaderNodeRGB' or link.from_node.bl_idname == 'ShaderNodeValue':
+                            if link.from_node.bl_idname == 'ShaderNodeRGB' or link.from_node.bl_idname == 'ShaderNodeValue' or link.from_node.bl_idname == 'ShaderNodeMapping':
                                 from_socket = str(f"''")
                             else:
                                 from_socket = str(f"'{socket_translate[ID][link.from_socket.name]}'")
@@ -698,7 +704,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.5.3"
+    bl_label = "TransMat v0.6.0"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
