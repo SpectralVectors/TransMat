@@ -215,15 +215,17 @@ This can sometimes be resolved by ensuring the position of the first colour is 0
 
 ## Acknowledgements and Thanks
 
-angjminer's Project BlUEMan demonstrated a similar functionality a few years ago, this is an attempt to achieve a similar result using an open framework.
+__angjminer__'s Project BlUEMan demonstrated a similar functionality a few years ago, this is an attempt to achieve a similar result using an open framework.
 
-Jim Kroovy submitted a crash fix, and a refactoring suggestion.
+__Jim Kroovy__ submitted a crash fix, and a refactoring suggestion.
 
-Momchilo has pitched in with some licensing resources.
+__Momchilo__ has pitched in with some licensing resources.
 
-PGMath posted an article on blender.stackexchange on how to recreate the Mapping and ColorRamp nodes using simple Math nodes, a huge help!
+__PGMath__ posted an article on blender.stackexchange on how to recreate the Mapping and ColorRamp nodes using simple Math nodes, a huge help!
 
-And a massive thanks to batFINGER, CodeManX, and sambler for their countless contributions over the years to blender.stackexchange!
+A massive thanks to __batFINGER__, __CodeManX__, and __sambler__ for their countless contributions over the years to blender.stackexchange!
+
+And thanks, of course, to __Epic Games__, and __Blender Foundation__!
 
 ## Example output (GroupTest1_TM.py):
 ~~~
