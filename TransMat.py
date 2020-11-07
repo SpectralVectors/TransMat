@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 6, 0),
+    'version': (0, 6, 1),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -259,7 +259,7 @@ class TransMatOperator(bpy.types.Operator):
         # A dictionary with all our nodes and their Blender sockets, paired with their Unreal socket counterparts
         # Some are left blank, as Unreal will grab the default output if you supply no name
         socket_translate = {
-        # Principled BSDF
+        # Principled BSDF begins
         "ShaderNodeBsdfPrincipled": {
         "Base Color":"BaseColor",#0
         "Subsurface":"Subsurface",#1
@@ -284,6 +284,7 @@ class TransMatOperator(bpy.types.Operator):
         "Clearcoat Normal":"ClearCoatNormal",#20
         "Tangent":"Tangent",#21
         "BSDF":"",},
+        # Principled BSDF ends, all other nodes are single lines
         "ShaderNodeValue": {"Value":"R"},
         "ShaderNodeRGB": {"Color":"Constant"},
         "ShaderNodeSeparateRGB":{"Image":"Float3","R":"R","G":"G","B":"B"},
@@ -343,6 +344,7 @@ class TransMatOperator(bpy.types.Operator):
         
         # A dictionary with our Blender nodes and their Unreal MaterialFunction counterparts
         material_function = {
+        # Mix RGB Blend Types
         'BURN':'mat_func_burn',
         'DODGE':'mat_func_dodge',
         'DARKEN':'mat_func_darken',
@@ -352,13 +354,16 @@ class TransMatOperator(bpy.types.Operator):
         'OVERLAY':'mat_func_overlay',
         'SCREEN':'mat_func_screen',
         'SOFT_LIGHT':'mat_func_soft_light',
+        # All 'Separate' and 'Combine' nodes are handled by the same Break/MakeFloat3
         "ShaderNodeSeparateRGB":'mat_func_separate',
         "ShaderNodeSeparateXYZ":'mat_func_separate',
         "ShaderNodeSeparateHSV":'mat_func_separate',
         "ShaderNodeCombineRGB":'mat_func_combine',
         "ShaderNodeCombineXYZ":'mat_func_combine',
         "ShaderNodeCombineHSV":'mat_func_combine',
+        # Mapping function
         "ShaderNodeMapping":'mat_func_mapping',
+        # ColorRamps are keyed by the number of colors they use
         "2":'mat_func_colorramp2',
         "3":'mat_func_colorramp3',
         "4":'mat_func_colorramp4',
@@ -408,6 +413,10 @@ class TransMatOperator(bpy.types.Operator):
             # 'load_data' - is a list of textures and material functions to load into nodes
             # 'values' - are any numerical values that can be input to nodes: constant, RGB, etc.
             # 'connections' - are formatted strings indicating: starting node, starting socket, ending node, ending socket
+            # The next set of keys are the "Post Load Nodes" pass, a second loop of node creation
+            # 'pln_create' - are strings, formatted as Unreal node creation statements, adds an RGB or Value node to transfer settings from Principled BSDF and Mapping nodes
+            # 'pln_values' - are formatted strings, setting the aforementioned RGB/Constant3Vector and Value/Constant values
+            # 'pln_connections' - are formatted strings creating new connections between our new nodes, and the sockets they are representing
             nodedata = {
             'nodename' : '',
             'uenodename' : '',
@@ -448,7 +457,7 @@ class TransMatOperator(bpy.types.Operator):
             ID = nodedata['ID']
             nodename = nodedata['nodename']
             
-            # Input Values on the Principled BSDF will be stored and recreated as additional Value/Constant, and RGB/Constant3Vector nodes in Unreal
+            # Input Values on the Principled BSDF will be stored and recreated as additional Value/Constant, and RGBA/Constant4Vector nodes in Unreal
             if node.bl_idname == 'ShaderNodeBsdfPrincipled':
                 offset = 1200
                 for input in node.inputs:
@@ -536,26 +545,44 @@ class TransMatOperator(bpy.types.Operator):
             # gathering data and formatting our Connection strings - connections
             # We only look at outputs for connections to avoid redundancy
             for output in node.outputs:
+                
                 # Only checking outputs that are connected
                 if output.is_linked:
+                    
                     # Looping through our connections
                     for link in output.links:
+                        
                         # Ignoring our Material Output, I should probably just remove this from an earlier list to avoid this ;p
                         if not link.to_node.bl_idname == 'ShaderNodeOutputMaterial':   
                             ID = nodedata['ID']
                             nodename = nodedata['nodename']
+                            
+                            # Because we now need to gather data from nodes other than the one we're currently operating on
+                            # we will be setting a lot of similar looking variables, but instead of the current node, we'll
+                            # be using the one it's linked TO or linked FROM - eg instead of node.name, we use link.from_node.name
                             from_node = str(link.from_node.name).replace('.0','').replace(' ','')
                             
+                            # Certain nodes in Unreal have output values, but not output names. Fortunately, Unreal will connect any blank
+                            # socket name to the default output socket, eg for RGB/Constant3Vector, even though the output is called 'Constant',
+                            # we must leave it blank, as that is how it appears in the Material editor
                             if link.from_node.bl_idname == 'ShaderNodeRGB' or link.from_node.bl_idname == 'ShaderNodeValue' or link.from_node.bl_idname == 'ShaderNodeMapping':
                                 from_socket = str(f"''")
                             else:
+                            # For every other node, we can use our socket_translate dictionary to get the proper socket name
                                 from_socket = str(f"'{socket_translate[ID][link.from_socket.name]}'")
                             
+                            # Blender only has one node for all of its math operations, and all of its inputs have the same name: 'Value'
+                            # In order to tell which socket we should be plugging into, we get its index value, either 0 or 1, use re.sub to
+                            # remove all characters except the 0 or 1, and plug that in as the socket name
                             if link.to_node.bl_idname == 'ShaderNodeMath' or link.to_node.bl_idname == 'ShaderNodeVectorMath' or link.to_node.bl_idname == 'ShaderNodeMixShader' or link.to_node.bl_idname == 'ShaderNodeAddShader':
                                 socketnumber = re.sub("[^0-9]", "", link.to_socket.path_from_id())
                                 socketnumberint = int(socketnumber)
                                 linktonodeID = re.sub("[^0-9]", "", link.to_node.name)
                                 
+                                # A second consequence of Blender's single Math node, and its single input name, is that it names all Math Value inputs sequentially
+                                # throughout the material, rather than just throughout the node, so, if you have 3 Multiply nodes, you might expect: (Multiply0 - Input0, Input1)
+                                # (Multiply1 - Input0, Input1), (Multiply2 - Input0, Input1). But, what you get is: (Multiply0 - Input0, Input1), (Multiply1 - Input2, Input3), 
+                                # (Multiply2 - Input 4, Input 5). The logic below compensates for this naming convention.
                                 if linktonodeID:
                                     linktonodeIDint = int(linktonodeID)
                                     socket = str(socketnumberint - linktonodeIDint * 10)
@@ -565,19 +592,24 @@ class TransMatOperator(bpy.types.Operator):
                                 socket = link.to_socket.name
                                             
                             to_node = str(link.to_node.name).replace('.0','').replace(' ','')
-                                
+                            
+                            # Again, this seems to be setting the same thing as the top of the function, but, this time we're pluggin in the node we're linking to
+                            # instead of the node that we're actually operating on     
                             if link.to_node.bl_idname == 'ShaderNodeMixRGB':
                                 ID = link.to_node.blend_type
                             if link.to_node.bl_idname == 'ShaderNodeMath' or link.to_node.bl_idname == 'ShaderNodeVectorMath':
                                 ID = link.to_node.operation    
                             if not link.to_node.bl_idname == 'ShaderNodeMixRGB' and not link.to_node.bl_idname == 'ShaderNodeMath' and not link.to_node.bl_idname == 'ShaderNodeVectorMath':
                                 ID = link.to_node.bl_idname
-                            print(link.to_node.bl_idname, ID, socket)  
+                              
                             to_socket = str(f"'{socket_translate[ID][socket]}'")
                             
+                            # Formatting all of our newly gathered data as an Unreal create connection statement, then storing that string in our dictionary
                             connection = str(nodename + "_connection = create_connection(" + from_node + ", " + from_socket+ ", " + to_node + ", " + to_socket+")")
                             nodedata['connections'].append(connection)
-                            
+            
+            # Now that we've got all the data we need for our current node, we package its dictionary into a 
+            # list of nodes that will be recreated in Unreal: uenodes                 
             uenodes.append(nodedata)
 
 ################################################################################
@@ -704,7 +736,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.6.0"
+    bl_label = "TransMat v0.6.1"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
