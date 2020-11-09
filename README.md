@@ -55,7 +55,7 @@ Transmat will find and import all the image textures from your Blender material,
 
 - __UV Map   =>__  TextureCoordinate
 
-~~- __Mapping   =>__  FunctionCall - BL_Mapping - (see limitations)
+- ~~__Mapping   =>__  FunctionCall - BL_Mapping - (see limitations)~~
 
 - __Mix Shader   =>__   BlendMaterialAttributes
 
