@@ -7,7 +7,7 @@ bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 6, 1),
+    'version': (0, 6, 2),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -201,6 +201,9 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeMixRGB",
         "ShaderNodeValToRGB",
         "ShaderNodeMapping",
+        "ShaderNodeBump",
+        "ShaderNodeNormal",
+        "ShaderNodeNormalMap",
         ]
         
         # A dictionary with all our nodes paired with their Unreal counterparts 
@@ -216,6 +219,9 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeValToRGB":"unreal.MaterialExpressionMaterialFunctionCall",
         "ShaderNodeMapping":"unreal.MaterialExpressionMaterialFunctionCall",
         "NodeReroute":"unreal.MaterialExpressionReroute",
+        "ShaderNodeNormal":"unreal.MaterialExpressionReroute",
+        "ShaderNodeNormalMap":"unreal.MaterialExpressionReroute",
+        "ShaderNodeBump":"unreal.MaterialExpressionMaterialFunctionCall",
         "ShaderNodeOutputMaterial":"",
         "ShaderNodeBsdfPrincipled":"unreal.MaterialExpressionMakeMaterialAttributes",
         "ShaderNodeMixShader":"unreal.MaterialExpressionBlendMaterialAttributes",
@@ -310,7 +316,10 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeMixShader":{"0":"Alpha","1":"A","2":"B","Shader":""},
         "ShaderNodeAddShader":{"0":"A","1":"B", "Shader":""},
         "ShaderNodeInvert":{"":""},
-        "ShaderNodeTexCoord":{"":""},
+        "ShaderNodeTexCoord":{"":"", "Generated":"", "Normal":"", "UV":"", "Object":"", "Camera":"", "Window":"", "Reflection":""},
+        "ShaderNodeBump":{"Height":"Height Map", "Strength":"Normal Map Intensity", "Normal":""},
+        "ShaderNodeNormal":{"":"","Normal":""},
+        "ShaderNodeNormalMap":{"Color":"","Normal":""},
         # Math Node Operations
         "ADD":{"0":"A","1":"B", "Scale":"","Value":"", "Vector":""},
         "SUBTRACT":{"0":"A","1":"B","Value":"", "Vector":""},
@@ -363,6 +372,8 @@ class TransMatOperator(bpy.types.Operator):
         "ShaderNodeCombineHSV":'mat_func_combine',
         # Mapping function
         "ShaderNodeMapping":'mat_func_mapping',
+        # Bump
+        "ShaderNodeBump":"mat_func_bump",
         # ColorRamps are keyed by the number of colors they use
         "2":'mat_func_colorramp2',
         "3":'mat_func_colorramp3',
@@ -533,7 +544,7 @@ class TransMatOperator(bpy.types.Operator):
                     offset += 60
                     
             # Material Functions and Textures - load_data
-            if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV" or node.bl_idname == 'ShaderNodeValToRGB' or node.bl_idname == 'ShaderNodeMapping':
+            if node.bl_idname == "ShaderNodeMixRGB" and not node.blend_type == 'MIX' or node.bl_idname == "ShaderNodeSeparateRGB" or node.bl_idname == "ShaderNodeSeparateXYZ" or node.bl_idname == "ShaderNodeSeparateHSV" or node.bl_idname == "ShaderNodeCombineRGB" or node.bl_idname == "ShaderNodeCombineXYZ" or node.bl_idname == "ShaderNodeCombineHSV" or node.bl_idname == 'ShaderNodeValToRGB' or node.bl_idname == 'ShaderNodeMapping' or node.bl_idname == 'ShaderNodeBump':
                 mat_func = str(f"{nodename}.set_editor_property('material_function',{material_function[ID]})")    
                 nodedata['load_data'].append(mat_func)
                
@@ -642,6 +653,7 @@ class TransMatOperator(bpy.types.Operator):
                 print(f"mat_func_soft_light = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Blends/Blend_SoftLight')")
                 print(f"mat_func_separate = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components')")
                 print(f"mat_func_combine = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3')")
+                print(f"mat_func_bump = unreal.load_asset('/Engine/Functions/Engine_MaterialFunctions03/Procedurals/NormalFromHeightmap')")
                 print("")
                 print(f"mat_func_mapping = unreal.load_asset('/Engine/Functions/BLUI/BL_Mapping')")
                 print(f"mat_func_colorramp2 = unreal.load_asset('/Engine/Functions/BLUI/BL_ColorRamp2')")
@@ -736,7 +748,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.6.1"
+    bl_label = "TransMat v0.6.2"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
@@ -780,7 +792,9 @@ class TransMatPanel(bpy.types.Panel):
         row = box.row()
         row.operator("blui.transmat_operator", icon='EXPORT')
 
+################################################################################
 # Register
+################################################################################
 
 def register():
     bpy.utils.register_class(TransMatPanel)
