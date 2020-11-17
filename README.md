@@ -101,7 +101,7 @@ Overlay   |  FunctionCall - Blend_Overlay
 Screen  |   FunctionCall - Blend_Screen
 Soft Light  |   FunctionCall - Blend_SoftLight
 
-Procedural Texture Nodes - via the Bake Noise Nodes button | Unreal Material Expression Node
+Procedural Texture Nodes (via Bake Noise Nodes) | Unreal Material Expression Node
 ---|---
 Brick Texture  | TextureSample - your baked texture will auto-import
 Checker Texture   |  TextureSample - your baked texture will auto-import
