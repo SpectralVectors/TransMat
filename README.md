@@ -49,17 +49,17 @@ __Blender Node__  |  Unreal Material Expression Node
 ---|---
 __Principled BSDF__ |   MakeMaterialAttributes
 
-__Image Texture  __ |   TextureSample
+__Image Texture__ |   TextureSample
 
-__Texture Coordinate   __ |  TextureCoordinate
+__Texture Coordinate__ |  TextureCoordinate
 
-__UV Map   =>__ |  TextureCoordinate
+__UV Map=>__ |  TextureCoordinate
 
-~~__Mapping   =>__ |  FunctionCall - BL_Mapping - (see limitations)~~
+~~__Mapping=>__ |  FunctionCall - BL_Mapping - (see limitations)~~
 
-__Mix Shader   =>__ |   BlendMaterialAttributes
+__Mix Shader=>__ |   BlendMaterialAttributes
 
-__Add Shader  =>__ |   Add
+__Add Shader=>__ |   Add
 
 - __Color Ramp  =>__  FunctionCall - BL_ColorRamp - supports up to 9 colors (a little buggy right now)
 
