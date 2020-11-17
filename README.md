@@ -48,17 +48,11 @@ Transmat will find and import all the image textures from your Blender material,
 __Blender Node__  |  Unreal Material Expression Node
 ---|---
 __Principled BSDF__ |   MakeMaterialAttributes
-
 __Image Texture__ |   TextureSample
-
 __Texture Coordinate__ |  TextureCoordinate
-
 __UV Map=>__ |  TextureCoordinate
-
 ~~__Mapping=>__ |  FunctionCall - BL_Mapping - (see limitations)~~
-
 __Mix Shader=>__ |   BlendMaterialAttributes
-
 __Add Shader=>__ |   Add
 
 - __Color Ramp  =>__  FunctionCall - BL_ColorRamp - supports up to 9 colors (a little buggy right now)
