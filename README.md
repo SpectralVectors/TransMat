@@ -50,106 +50,72 @@ Blender Shader Node  |  Unreal Material Expression Node
 Principled BSDF |   MakeMaterialAttributes
 Image Texture |   TextureSample
 Texture Coordinate |  TextureCoordinate
-__UV Map__ |  TextureCoordinate
-__Mix Shader__ |   BlendMaterialAttributes
-__Add Shader__ |   Add
-__Color Ramp__ | FunctionCall - BL_ColorRamp - see limitations
-__Invert__  | OneMinus
-__Fresnel__ | Fresnel
-__Value__ | Constant
- __RGB__ | Constant3Vector
- __Reroute__ |  Reroute
-__Separate RGB__ |  FunctionCall - BreakOutFloat3Components
-__Separate XYZ__  | FunctionCall - BreakOutFloat3Components
-__Separate HSV__ |  FunctionCall - BreakOutFloat3Components
-__Combine RGB__  | FunctionCall - MakeFloat3
-__Combine XYZ__  | FunctionCall - MakeFloat3
-__Combine HSV__ |  FunctionCall - MakeFloat3
+UV Map |  TextureCoordinate
+Mix Shader |   BlendMaterialAttributes
+Add Shader |   Add
+Color Ramp | FunctionCall - BL_ColorRamp - see limitations
+Invert  | OneMinus
+Fresnel | Fresnel
+Value | Constant
+ RGB | Constant3Vector
+ Reroute |  Reroute
+Separate RGB |  FunctionCall - BreakOutFloat3Components
+Separate XYZ  | FunctionCall - BreakOutFloat3Components
+Separate HSV |  FunctionCall - BreakOutFloat3Components
+Combine RGB  | FunctionCall - MakeFloat3
+Combine XYZ  | FunctionCall - MakeFloat3
+Combine HSV |  FunctionCall - MakeFloat3
 
-__Math Node Operation__ | Unreal Material Expression Node
+Math Node Operation | Unreal Material Expression Node
 ---|---
-__Add__ | Add
-__Subtract__ |  Subtract
+Add | Add
+Subtract |  Subtract
+Multiply |   Multiply
+Divide  |   Divide
+Sine  |  Sine
+Arcsine   |   Arcsine
+Cosine  |   Cosine
+Arccosine   |  Arccosine 
+Power   |   Power
+Minimum   |   Min
+Maximum   |   Max
+Round   |  Round
+Absolute  |  Abs
 
-- __Multiply  =>__   Multiply
+Vector Math Node Operations | Unreal Material Expression Node
+---|---
+Normalize    |   Normalize
+Dot Product   |  DotProduct
+Cross Product |  CrossProduct
 
-- __Divide  =>__   Divide
+MixRGB Node Blend Types | Unreal Material Expression Node
+---|---
+Mix   |  LinearInterpolate (our friend Lerp!)
+Color Burn  | FunctionCall - Blend_ColorBurn
+Color Dodge   |  FunctionCall - Blend_ColorDodge
+Darken  |   FunctionCall - Blend_Darken
+Difference  |   FunctionCall - Blend_Difference
+Lighten   |  FunctionCall - Blend_Lighten
+Linear Light  |  FunctionCall - Blend_LinearLight
+Overlay   |  FunctionCall - Blend_Overlay
+Screen  |   FunctionCall - Blend_Screen
+Soft Light  |   FunctionCall - Blend_SoftLight
 
-- __Sine  =>__  Sine
+Procedural Texture Nodes - via the Bake Noise Nodes button | Unreal Material Expression Node
 
-- __Arcsine   =>__   Arcsine
-
-- __Cosine  =>__   Cosine
-
-- __Arccosine   =>__  Arccosine 
-
-- __Power   =>__   Power
-
-- __Minimum   =>__   Min
-
-- __Maximum   =>__   Max
-
-- __Round   =>__  Round
-
-- __Absolute  =>__  Abs
-
-#### Vector Math Node Operations:
-
-- __Normalize    =>__   Normalize
-
-- __Dot Product    =>__   DotProduct
-
-- __Cross Product  =>__  CrossProduct
-
-#### MixRGB Node Blend Types:
-
-- __Mix   =>__  LinearInterpolate (our friend Lerp!)
-
-- __Color Burn  =>__  FunctionCall - Blend_ColorBurn
-
-- __Color Dodge   =>__  FunctionCall - Blend_ColorDodge
-
-- __Darken  =>__   FunctionCall - Blend_Darken
-
-- __Difference  =>__   FunctionCall - Blend_Difference
-
-- __Lighten   =>__  FunctionCall - Blend_Lighten
-
-- __Linear Light  =>__  FunctionCall - Blend_LinearLight
-
-- __Overlay   =>__  FunctionCall - Blend_Overlay
-
-- __Screen  =>__   FunctionCall - Blend_Screen
-
-- __Soft Light  =>__   FunctionCall - Blend_SoftLight
-
-#### Procedural Texture Nodes - via the Bake Noise Nodes button:
-
-- __Brick Texture   =>__  TextureSample
-
-- __Checker Texture   =>__  TextureSample
-
-- __Environment Texture   =>__   TextureSample
-
-- __Gradient Texture  =>__   TextureSample
-
-- __IES Texture   =>__  TextureSample
-
-- __Musgrave Texture  =>__  TextureSample
-
-- __Magic Texture   =>__   TextureSample
-
-- __Noise Texture  =>__  TextureSample
-
-- __Point Density Texture  =>__  TextureSample
-
-- __Sky Texture   =>__   TextureSample
-
-- __Voronoi Texture   =>__  TextureSample
-
-- __Wave Texture  =>__   TextureSample
-
-- __White Noise Texture  =>__  TextureSample
+Brick Texture  | TextureSample - your baked texture will auto-import
+Checker Texture   |  TextureSample - your baked texture will auto-import
+Environment Texture  |   TextureSample - your baked texture will auto-import
+Gradient Texture  |   TextureSample - your baked texture will auto-import
+IES Texture   |  TextureSample - your baked texture will auto-import
+Musgrave Texture  |  TextureSample - your baked texture will auto-import
+Magic Texture   |   TextureSample - your baked texture will auto-import
+Noise Texture  |  TextureSample - your baked texture will auto-import
+Point Density Texture  |  TextureSample - your baked texture will auto-import
+Sky Texture   |   TextureSample - your baked texture will auto-import
+Voronoi Texture   |  TextureSample - your baked texture will auto-import
+Wave Texture  |   TextureSample - your baked texture will auto-import
+White Noise Texture  |  TextureSample - your baked texture will auto-import
 
 ## Currently unsupported Blender Nodes
 
