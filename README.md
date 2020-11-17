@@ -53,25 +53,22 @@ __Texture Coordinate__ |  TextureCoordinate
 __UV Map__ |  TextureCoordinate
 __Mix Shader__ |   BlendMaterialAttributes
 __Add Shader__ |   Add
-__Color Ramp__  FunctionCall - BL_ColorRamp - see limitations
-__Invert__   OneMinus
-__Fresnel__  Fresnel
-__Value__  Constant
- __RGB__  Constant3Vector
- __Reroute__   Reroute
-__Separate RGB__   FunctionCall - BreakOutFloat3Components
-__Separate XYZ__   FunctionCall - BreakOutFloat3Components
-__Separate HSV__   FunctionCall - BreakOutFloat3Components
-
-- __Combine RGB   =>__   FunctionCall - MakeFloat3
-
-- __Combine XYZ   =>__   FunctionCall - MakeFloat3
-
-- __Combine HSV   =>__   FunctionCall - MakeFloat3
+__Color Ramp__ | FunctionCall - BL_ColorRamp - see limitations
+__Invert__  | OneMinus
+__Fresnel__ | Fresnel
+__Value__ | Constant
+ __RGB__ | Constant3Vector
+ __Reroute__ |  Reroute
+__Separate RGB__ |  FunctionCall - BreakOutFloat3Components
+__Separate XYZ__  | FunctionCall - BreakOutFloat3Components
+__Separate HSV__ |  FunctionCall - BreakOutFloat3Components
+__Combine RGB__  | FunctionCall - MakeFloat3
+__Combine XYZ__  | FunctionCall - MakeFloat3
+__Combine HSV__ |  FunctionCall - MakeFloat3
 
 #### Math Node Operations:
 
-- __Add   =>__  Add
+__Add__ | Add
 
 - __Subtract  =>__   Subtract
 
