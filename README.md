@@ -233,7 +233,7 @@ A massive thanks to __batFINGER__, __CodeManX__, and __sambler__ for their count
 And thanks, of course, to __Epic Games__, and __Blender Foundation__!
 
 ## Example output (GroupTest1_TM.py):
-~~~
+~~~python
 import unreal
 
 GroupTest1=unreal.AssetToolsHelpers.get_asset_tools().create_asset('GroupTest1','/Game/', unreal.Material, unreal.MaterialFactoryNew())
