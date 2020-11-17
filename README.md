@@ -67,10 +67,9 @@ __Combine XYZ__  | FunctionCall - MakeFloat3
 __Combine HSV__ |  FunctionCall - MakeFloat3
 
 #### Math Node Operations:
-
+---|---
 __Add__ | Add
-
-- __Subtract  =>__   Subtract
+__Subtract__ |  Subtract
 
 - __Multiply  =>__   Multiply
 
