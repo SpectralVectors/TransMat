@@ -50,28 +50,18 @@ __Blender Node__  |  Unreal Material Expression Node
 __Principled BSDF__ |   MakeMaterialAttributes
 __Image Texture__ |   TextureSample
 __Texture Coordinate__ |  TextureCoordinate
-__UV Map=>__ |  TextureCoordinate
-~~__Mapping=>__ |  FunctionCall - BL_Mapping - (see limitations)~~
-__Mix Shader=>__ |   BlendMaterialAttributes
-__Add Shader=>__ |   Add
-
-- __Color Ramp  =>__  FunctionCall - BL_ColorRamp - supports up to 9 colors (a little buggy right now)
-
-- __Invert  =>__   OneMinus
-
-- __Fresnel   =>__  Fresnel
-
-- __Value   =>__  Constant
-
-- __RGB   =>__  Constant3Vector
-
-- __Reroute   =>__   Reroute
-
-- __Separate RGB   =>__   FunctionCall - BreakOutFloat3Components
-
-- __Separate XYZ   =>__   FunctionCall - BreakOutFloat3Components
-
-- __Separate HSV   =>__   FunctionCall - BreakOutFloat3Components
+__UV Map__ |  TextureCoordinate
+__Mix Shader__ |   BlendMaterialAttributes
+__Add Shader__ |   Add
+__Color Ramp__  FunctionCall - BL_ColorRamp - see limitations
+__Invert__   OneMinus
+__Fresnel__  Fresnel
+__Value__  Constant
+ __RGB__  Constant3Vector
+ __Reroute__   Reroute
+__Separate RGB__   FunctionCall - BreakOutFloat3Components
+__Separate XYZ__   FunctionCall - BreakOutFloat3Components
+__Separate HSV__   FunctionCall - BreakOutFloat3Components
 
 - __Combine RGB   =>__   FunctionCall - MakeFloat3
 
