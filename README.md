@@ -45,11 +45,11 @@ Transmat will find and import all the image textures from your Blender material,
 
 ## Currently supported Blender Nodes
 
-### __Blender Shader Node__  |  Unreal Material Expression Node
+Blender Shader Node  |  Unreal Material Expression Node
 ---|---
-__Principled BSDF__ |   MakeMaterialAttributes
-__Image Texture__ |   TextureSample
-__Texture Coordinate__ |  TextureCoordinate
+Principled BSDF |   MakeMaterialAttributes
+Image Texture |   TextureSample
+Texture Coordinate |  TextureCoordinate
 __UV Map__ |  TextureCoordinate
 __Mix Shader__ |   BlendMaterialAttributes
 __Add Shader__ |   Add
