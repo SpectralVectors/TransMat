@@ -45,7 +45,7 @@ Transmat will find and import all the image textures from your Blender material,
 
 ## Currently supported Blender Nodes
 
-__Blender Node__  |  Unreal Material Expression Node
+__Blender Shader Node__  |  Unreal Material Expression Node
 ---|---
 __Principled BSDF__ |   MakeMaterialAttributes
 __Image Texture__ |   TextureSample
@@ -66,7 +66,7 @@ __Combine RGB__  | FunctionCall - MakeFloat3
 __Combine XYZ__  | FunctionCall - MakeFloat3
 __Combine HSV__ |  FunctionCall - MakeFloat3
 
-#### Math Node Operations:
+__Math Node Operation__ | Unreal Material Expression Node
 ---|---
 __Add__ | Add
 __Subtract__ |  Subtract
