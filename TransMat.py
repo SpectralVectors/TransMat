@@ -1,13 +1,11 @@
-import bpy
-import os
-import re
+import bpy, os, re
 from contextlib import redirect_stdout
 
 bl_info = {
     'name': 'TransMat',
     'category': 'Node Editor',
     'author': 'Spectral Vectors',
-    'version': (0, 6, 2),
+    'version': (0, 6, 4),
     'blender': (2, 90, 0),
     'location': 'Node Editor',
     "description": "Automatically recreates Blender materials in Unreal"
@@ -550,7 +548,7 @@ class TransMatOperator(bpy.types.Operator):
                
             if node.bl_idname == "ShaderNodeTexImage":
                 image_name = str(node.image.name).replace('.0','').replace(' ','')
-                texture = str(f"{nodename}.texture = unreal.load_asset('/Game{texturedirectory}/{image_name}')")
+                texture = str(f"{nodename}.texture = unreal.load_asset('/Game/{texturedirectory}/{image_name}')")
                 nodedata['load_data'].append(texture)
             
             # gathering data and formatting our Connection strings - connections
@@ -676,7 +674,7 @@ class TransMatOperator(bpy.types.Operator):
                         image_name = str(node.image.name).replace('.0','').replace(' ','')
                         image_filepath = str(node.image.filepath_from_user())
                         
-                        print(f"{image_name} = '{image_filepath}'")
+                        print(f"{image_name} = r'{image_filepath}'")
                         print("")
                         print(f"{image_name}_import = unreal.AssetImportTask()")
                         print(f"{image_name}_import.set_editor_property('automated',True)")
@@ -748,7 +746,7 @@ class TransMatOperator(bpy.types.Operator):
 
 class TransMatPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the node editor"""
-    bl_label = "TransMat v0.6.2"
+    bl_label = "TransMat v0.6.4"
     bl_idname = "BLUI_PT_transmat"
     bl_category = "TransMat"
     bl_space_type = 'NODE_EDITOR'
